@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HW 4</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
+<style>
+    table {
+    font-family: Tahoma, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    border-radius: 8px; 
+    overflow: hidden; 
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 10px;
+    }
+
+    tr:nth-child(even) {
+    background-color: #dddddd;
+    }
+
+    .high {
+    background-color: mediumseagreen;
+    }
+    .low {
+    background-color: gray;
+    }
+</style>
+<script src="animalcrashes_24.js" ></script>
+</head>
+
+<body>
+<h2 style="font-family: 'Verdana', sans-serif; color: #007acc;" >Animal Collisions in North Carolina</h2>
+<h4 style="font-family: 'Verdana', sans-serif; color: #3498db;">County-based animal collision data for North Carolina in 2024</h4>
+
+<table id="mytable">
+  <tr>
+    <th>County Name</th>
+    <th>Date</th>
+    <th>Time</th>
+    <th>City</th>
+  </tr>    
+</table>
+
+<script>
+    var ac = document.getElementById("mytable");
+
+    // var x = document.getElementById('mytable')
+  
+    for (var i =0; i <data.features.length; i++){
+        var crash = data.features[i].properties;
+
+        var myNewRow = document.createElement('tr');
+        var myNewCell1 = document.createElement('td');
+        var myNewCell2 = document.createElement('td');
+        var myNewCell3 = document.createElement('td');
+        var myNewCell4 = document.createElement('td');
+
+        myNewCell1.innerHTML = crash.CountyName;
+        myNewCell2.innerHTML = crash.Date;
+        myNewCell3.innerHTML = crash.Time;
+        myNewCell4.innerHTML = crash.City;
+
+        myNewCell4.className = getClassName(crash.City);
+
+        myNewRow.append(myNewCell1);
+        myNewRow.append(myNewCell2);
+        myNewRow.append(myNewCell3);
+        myNewRow.append(myNewCell4);
+        ac.append(myNewRow);
+    }
+
+    function getClassName(cityName) {
+        if (cityName == "Rural") return 'high';
+        return 'low';
+    }
+
+
+</script>
+</body>
+</html>
