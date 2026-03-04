@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>HW 5</title>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""/>
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
+    <script src="animalcrashes_24.js"></script>
+</head>
+<style>
+    #map {
+        width: 100%;
+        height: 700px;
+    }
+</style>
+<body>
+    <h1>Animal Crashes in Raleigh by Month in 2024</h1>
+    <h3 id ="theDate">Date:</h3>
+    <input id="dateSlider" type = "range" name = "Date" min = "0" max = "11" oninput="moveSlider(this.value)">
+    <div id="map"></div>
+    <script>
+        var map = L.map('map').setView([35.8, -78.6], 10.5);
+        L.tileLayer('http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+        var LeafIcon = L.Icon.extend({
+            options: {
+                iconSize:     [50, 40],
+                iconAnchor:   [20, 15],
+            }
+        })
+
+        var greenIcon = new LeafIcon({iconUrl: 'https://cdn-icons-png.flaticon.com/512/4885/4885983.png'})
+
+        var geojson;    
+    
+        function moveSlider(value) {
+
+        // Remove previous layer if it exists
+        if (geojson) {
+            map.removeLayer(geojson);
+        }
+
+        // Convert slider value (0–11) to month number (1–12)
+        var selectedMonth = parseInt(value) + 1;
+        var monthNames = [
+        "January","February","March","April","May","June",
+        "July","August","September","October","November","December"
+        ];
+
+        document.getElementById('theDate').innerHTML =
+            'Month: ' + monthNames[value];
+        
+        // Filter features by selected month
+        var filteredFeatures = data.features.filter(function(feature) {
+
+            // Skip features with missing coordinates
+            if (feature.properties.Latitude === 0 || 
+                feature.properties.Longitude === 0) {
+                return false;
+            }
+
+            var crashDate = new Date(feature.properties.Date);
+            var crashMonth = crashDate.getMonth() + 1;
+
+            return feature.properties.City === "Raleigh" && crashMonth === selectedMonth;
+        });
+
+        // Create layer using filtered data
+        geojson = L.geoJson(filteredFeatures, {
+            pointToLayer: function(feature, latlng) {
+
+                return L.marker(
+                    [feature.properties.Latitude, 
+                    feature.properties.Longitude],
+                    { icon: greenIcon }
+                );
+            }
+        });
+
+        map.addLayer(geojson);
+    }        
+
+        moveSlider(0) // start the map with the first feature
+        window.onload = function() {
+        document.getElementById('dateSlider').value = 0;  
+    }; // I added this section to make sure that the slider goes back to the first date after refreshing
+
+    </script>        
+    
+</body>
+</html>
