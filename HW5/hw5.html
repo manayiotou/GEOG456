@@ -19,13 +19,13 @@
     }
 </style>
 <body>
-    <h1>Animal Collisions in Raleigh, NC per Month in 2024</h1>
+    <h1>Vehicle Collisions with Animals in Raleigh, NC per Month in 2024</h1>
     <h3 id ="theDate">Date:</h3>
     <input id="dateSlider" type = "range" name = "Date" min = "0" max = "11" oninput="moveSlider(this.value)">
     <div id="map"></div>
     <script>
         var map = L.map('map').setView([35.8, -78.6], 10.5);
-        L.tileLayer('http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+        L.tileLayer("http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}", {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
 
