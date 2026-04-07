@@ -44,6 +44,11 @@
         height: 700px;
     }
 </style>
+<div style="text-align:center; margin:20px;">
+  <input type="range" id="dateSlider" min="0" max="3" step="1"
+         oninput="moveSlider(this.value)">
+  <p id="theDate"></p>
+</div>
 <body>
     <div id="map"></div>
     <script>
@@ -59,38 +64,37 @@
             }
         })
         var gooseIcon = new LeafIcon({iconUrl: 'https://www.pngarts.com/files/4/Goose-Transparent-Image.png'});
-        var markers = L.markerClusterGroup();
+        // var markers = L.markerClusterGroup();
 
-        for (var i = 0; i < geeseObservations.features.length; i++) {
-            var feature = geeseObservations.features[i];
-            var props = feature.properties;
+        // for (var i = 0; i < geeseObservations.features.length; i++) {
+        //     var feature = geeseObservations.features[i];
+        //     var props = feature.properties;
 
-            if (
-                feature.geometry.coordinates[0] == null ||
-                feature.geometry.coordinates[1] == null
-            ) {
-                continue;
-            }
+        //     if (
+        //         feature.geometry.coordinates[0] == null ||
+        //         feature.geometry.coordinates[1] == null
+        //     ) {
+        //         continue;
+        //     }
 
-            var species = props.vernacularName || "Unknown species";
-            var date = props.year || "Unknown date";
-            var day = props.day || "Unknown day";
+        //     var species = props.vernacularName || "Unknown species";
+        //     var date = props.year || "Unknown date";
+        //     var day = props.day || "Unknown day";
 
-            var marker = L.marker(
-                [feature.geometry.coordinates[1], feature.geometry.coordinates[0]],
-                { icon: gooseIcon }
-            );
+        //     var marker = L.marker(
+        //         [feature.geometry.coordinates[1], feature.geometry.coordinates[0]],
+        //         { icon: gooseIcon }
+        //     );
 
-            marker.bindPopup(
-                "<b>Species:</b> " + species +
-                "<br><b>Date: November</b> " + day + ", " + date +
-                "<br><b>Number Observed:</b> " + props.individualCount
-            );
+        //     marker.bindPopup(
+        //         "<b>Species:</b> " + species +
+        //         "<br><b>Date: November</b> " + day + ", " + date +
+        //         "<br><b>Number Observed:</b> " + props.individualCount
+        //     );
 
-            markers.addLayer(marker);
-        }
+        // }
 
-        map.addLayer(markers);
+
 
 
         var geojson;    
@@ -118,7 +122,7 @@
                 return false;
             }
 
-            var obsYear = feature.properties.year;
+            var obsYear = parseInt(feature.properties.year);
 
             return obsYear === selectedYear;
         });
@@ -126,12 +130,8 @@
         // Create layer using filtered data
         geojson = L.geoJson(filteredFeatures, {
             pointToLayer: function(feature, latlng) {
-
-                return L.marker(
-                    [feature.geometry.coordinates[1], feature.geometry.coordinates[0]],
-                    { icon: gooseIcon }
-                );
-            }
+                return L.marker(latlng, { icon: gooseIcon });
+            }       
         });
 
         map.addLayer(geojson);
