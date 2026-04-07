@@ -61,8 +61,8 @@
         var gooseIcon = new LeafIcon({iconUrl: 'https://www.pngarts.com/files/4/Goose-Transparent-Image.png'});
         var markers = L.markerClusterGroup();
 
-        for (var i = 0; i < geeseObservations.features.length; i++) {
-            var feature = geeseObservations.features[i];
+        for (var i = 0; i < GeeseData.features.length; i++) {
+            var feature = GeeseData.features[i];
             var props = feature.properties;
 
             if (
