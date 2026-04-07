@@ -101,26 +101,23 @@
             map.removeLayer(geojson);
         }
 
-        // Convert slider value (0–11) to month number (1–12)
-        var selectedYear = parseInt(value) + 1;
-        var Years = [
-        "2008", "2013", "2018", "2023"
-        ];
+        // Convert slider value (0–11)
+        var Years = [2008, 2013, 2018, 2023];
+        var selectedYear = Years[value];
 
         document.getElementById('theDate').innerHTML =
-            'Year: ' + Years[value];
+            'Year: ' + selectedYear;
         
         // Filter features by selected month
-        var filteredFeatures = data.features.filter(function(feature) {
+        var filteredFeatures = GeeseData.features.filter(function(feature) {
 
             // Skip features with missing coordinates
-            if (props.decimalLatitude == null ||
-                props.decimalLongitude == null) {
+            if (feature.geometry.coordinates[0] == null ||
+                feature.geometry.coordinates[1] == null) {
                 return false;
             }
 
-            var obsDate = new Date(feature.properties.Date);
-            var obsYear = obsDate.getFullYear() + 1;
+            var obsYear = feature.properties.year;
 
             return obsYear === selectedYear;
         });
@@ -130,7 +127,7 @@
             pointToLayer: function(feature, latlng) {
 
                 return L.marker(
-                    [props.decimalLatitude, props.decimalLongitude],
+                    [feature.geometry.coordinates[1], feature.geometry.coordinates[0]],
                     { icon: gooseIcon }
                 );
             }
