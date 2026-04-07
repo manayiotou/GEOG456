@@ -61,8 +61,8 @@
         var gooseIcon = new LeafIcon({iconUrl: 'https://www.pngarts.com/files/4/Goose-Transparent-Image.png'});
         var markers = L.markerClusterGroup();
 
-        for (var i = 0; i < GeeseData.features.length; i++) {
-            var feature = GeeseData.features[i];
+        for (var i = 0; i < geeseObservations.features.length; i++) {
+            var feature = geeseObservations.features[i];
             var props = feature.properties;
 
             if (
@@ -109,7 +109,7 @@
             'Year: ' + selectedYear;
         
         // Filter features by selected month
-        var filteredFeatures = GeeseData.features.filter(function(feature) {
+        var filteredFeatures = geeseObservations.features.filter(function(feature) {
 
             // Skip features with missing coordinates
             if (feature.geometry.coordinates[0] == null ||
