@@ -8,6 +8,8 @@
     <!-- Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css">
+    <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
 
     <!-- Data -->
     <script src="GeeseData.js"></script>
@@ -77,13 +79,12 @@
         iconAnchor: [20, 15]
     });
 
-    var geojson;
+    var markers = L.markerClusterGroup();
 
     function moveSlider(value) {
-
         // Remove old layer
-        if (geojson) {
-            map.removeLayer(geojson);
+        if (markers) {
+            map.removeLayer(markers);
         }
 
         var Years = [2008, 2013, 2018, 2023];
@@ -91,6 +92,9 @@
 
         document.getElementById('theDate').innerHTML =
             'Year: ' + selectedYear;
+
+        // Create new cluster group
+        markers = L.markerClusterGroup();
 
         var filteredFeatures = geeseObservations.features.filter(function(feature) {
 
@@ -105,32 +109,34 @@
             return obsYear === selectedYear;
         });
 
-        geojson = L.geoJson(filteredFeatures, {
+        // Add markers to cluster
+        filteredFeatures.forEach(function(feature) {
 
-            pointToLayer: function(feature, latlng) {
-                return L.marker(latlng, { icon: gooseIcon });
-            },
+            var coords = feature.geometry.coordinates;
+            var props = feature.properties;
 
-            onEachFeature: function(feature, layer) {
-                var props = feature.properties;
+            var marker = L.marker(
+                [coords[1], coords[0]],
+                { icon: gooseIcon }
+            );
 
-                layer.bindPopup(
-                    "<b>Species:</b> " + (props.vernacularName || "Unknown") +
-                    "<br><b>Year:</b> " + props.year +
-                    "<br><b>Count:</b> " + (props.individualCount || "N/A")
-                );
-            }
+            marker.bindPopup(
+                "<b>Species:</b> " + (props.vernacularName || "Unknown") +
+                "<br><b>Year:</b> " + props.year +
+                "<br><b>Count:</b> " + (props.individualCount || "N/A")
+            );
 
+            markers.addLayer(marker);
         });
 
-        map.addLayer(geojson);
-    }
+        map.addLayer(markers);
+}
 
-    // Initialize slider
-    window.onload = function() {
-        document.getElementById('dateSlider').value = 0;
-        moveSlider(0);
-    };
+        // Initialize slider
+        window.onload = function() {
+            document.getElementById('dateSlider').value = 0;
+            moveSlider(0);
+        };
 
     // ---------------- MAP 2 (NLCD) ----------------
     var nlcdMap = L.map('nlcdMap').setView([40.3, -75.0], 7.5);
