@@ -74,6 +74,7 @@
 
             var species = props.vernacularName || "Unknown species";
             var date = props.year || "Unknown date";
+            var day = props.day || "Unknown day";
 
             var marker = L.marker(
                 [feature.geometry.coordinates[1], feature.geometry.coordinates[0]],
@@ -82,7 +83,7 @@
 
             marker.bindPopup(
                 "<b>Species:</b> " + species +
-                "<br><b>Date: November</b> " + date +
+                "<br><b>Date: November</b> " + day + ", " + date +
                 "<br><b>Number Observed:</b> " + props.individualCount
             );
 
