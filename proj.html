@@ -92,7 +92,7 @@
         document.getElementById('theDate').innerHTML =
             'Year: ' + selectedYear;
 
-        var filteredFeatures = GeeseData.features.filter(function(feature) {
+        var filteredFeatures = geeseObservations.features.filter(function(feature) {
 
             if (!feature.geometry || !feature.geometry.coordinates) return false;
 
