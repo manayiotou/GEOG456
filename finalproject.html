@@ -72,7 +72,7 @@
                 continue;
             }
 
-            var species = props.species || "Unknown species";
+            var species = props.vernacularName || "Unknown species";
             var date = props.year || "Unknown date";
 
             var marker = L.marker(
@@ -82,7 +82,7 @@
 
             marker.bindPopup(
                 "<b>Species:</b> " + species +
-                "<br><b>Date:</b> " + date
+                "<br><b>Date: November</b> " + date
             );
 
             markers.addLayer(marker);
