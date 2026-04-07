@@ -13,7 +13,7 @@
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css">
     <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
-<script src="geeseObservations.js"></script>
+<script src="GeeseData.js"></script>
 </head>
 <header style="background-image: url('https://www.mcall.com/wp-content/uploads/migration/2021/06/12/GXYS2SGPF5BARD67VMW6FRVL5U.jpg'); height: 800px; background-size: cover;">
   <h1>Visualizing Canadian Geese Observations in New Jersey</h1>
@@ -66,8 +66,8 @@
             var props = feature.properties;
 
             if (
-                props.decimalLatitude == null ||
-                props.decimalLongitude == null
+                feature.geometry.coordinates[0] == null ||
+                feature.geometry.coordinates[1] == null
             ) {
                 continue;
             }
@@ -76,7 +76,7 @@
             var date = props.eventDate || "Unknown date";
 
             var marker = L.marker(
-                [props.decimalLatitude, props.decimalLongitude],
+                [feature.geometry.coordinates[1], feature.geometry.coordinates[0]],
                 { icon: gooseIcon }
             );
 
