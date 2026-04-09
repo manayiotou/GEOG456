@@ -61,115 +61,18 @@
             background-color: #111111;
         }
 
-        #map, #nlcdMap {
-            width: 80%;
-            height: 600px;
-            margin: 20px auto;
-        }
-
-        #sliderContainer {
-            text-align: center;
-            margin: 20px;
-        }
     </style>
 </head>
-
 <body>
-
 <header>
     <h1>Visualizing Canadian Geese Observations in New Jersey</h1>
 </header>
 
-<div id="sliderContainer">
-    <input type="range" id="dateSlider" min="0" max="3" step="1"
-           oninput="moveSlider(this.value)">
-    <p id="theDate"></p>
-</div>
+<ul>
+  <li><a href="secondPage.html">Observational Data</a></li>
+  <li><a href="#news">News</a></li>
+</ul>
 
-<div id="map"></div>
-<div id="nlcdMap"></div>
-
-<script>
-    // ---------------- MAP 1 (GEESE) ----------------
-    var map = L.map('map').setView([40.3, -75.0], 7.5);
-
-    L.tileLayer("https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}", {
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
-
-    var gooseIcon = L.icon({
-        iconUrl: 'https://www.pngarts.com/files/4/Goose-Transparent-Image.png',
-        iconSize: [40, 30],
-        iconAnchor: [20, 15]
-    });
-
-    var markers = L.markerClusterGroup();
-
-    function moveSlider(value) {
-        // Remove old layer
-        if (markers) {
-            map.removeLayer(markers);
-        }
-
-        var Years = [2008, 2013, 2018, 2023];
-        var selectedYear = Years[value];
-
-        document.getElementById('theDate').innerHTML =
-            'Year: ' + selectedYear;
-
-        // Create new cluster group
-        markers = L.markerClusterGroup();
-
-        var filteredFeatures = geeseObservations.features.filter(function(feature) {
-            if (!feature.geometry || !feature.geometry.coordinates) return false;
-            var coords = feature.geometry.coordinates;
-            if (coords[0] == null || coords[1] == null) return false;
-            var obsYear = parseInt(feature.properties.year);
-            return obsYear === selectedYear;
-        });
-
-        // Add markers to cluster
-        filteredFeatures.forEach(function(feature) {
-
-            var coords = feature.geometry.coordinates;
-            var props = feature.properties;
-            
-            var marker = L.marker(
-                [coords[1], coords[0]],
-                { icon: gooseIcon }
-            );
-
-            marker.bindPopup(
-                "<b>Species:</b> " + (props.vernacularName || "Unknown") +
-                "<br><b>Year:</b> " + props.year +
-                "<br><b>Count:</b> " + (props.individualCount || "N/A")
-            );
-
-            markers.addLayer(marker);
-        });
-
-        map.addLayer(markers);
-}
-
-        // Initialize slider
-        window.onload = function() {
-            document.getElementById('dateSlider').value = 0;
-            moveSlider(0);
-        };
-
-    // ---------------- MAP 2 (NLCD) ----------------
-    var nlcdMap = L.map('nlcdMap').setView([40.3, -75.0], 7.5);
-
-    L.tileLayer("https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}", {
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(nlcdMap);
-
-    var nlcdLayer = L.tileLayer(
-        'https://manayiotou.github.io/GEOG456/2008tiles/{z}/{x}/{y}.png',
-        { attribution: 'NLCD 2008' }
-    ).addTo(nlcdMap);
-
-</script>
 
 </body>
 </html>
