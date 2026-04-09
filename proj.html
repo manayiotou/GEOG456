@@ -36,6 +36,30 @@
             padding: 10px 20px;
             border-radius: 10px;
         }
+        
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #333333;
+            }
+
+        ul li {
+            float: left;
+        }
+
+        ul li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        ul li a:hover {
+            background-color: #111111;
+        }
 
         #map, #nlcdMap {
             width: 80%;
@@ -97,15 +121,10 @@
         markers = L.markerClusterGroup();
 
         var filteredFeatures = geeseObservations.features.filter(function(feature) {
-
             if (!feature.geometry || !feature.geometry.coordinates) return false;
-
             var coords = feature.geometry.coordinates;
-
             if (coords[0] == null || coords[1] == null) return false;
-
             var obsYear = parseInt(feature.properties.year);
-
             return obsYear === selectedYear;
         });
 
@@ -114,7 +133,7 @@
 
             var coords = feature.geometry.coordinates;
             var props = feature.properties;
-
+            
             var marker = L.marker(
                 [coords[1], coords[0]],
                 { icon: gooseIcon }
