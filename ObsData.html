@@ -63,8 +63,8 @@
     //  MAP 1 (GEESE) 
 var map = L.map('map').setView([40.3, -75.0], 7.5);
 
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+L.tileLayer("https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}", {
+    attribution: '&copy; OpenStreetMap contributors',
     subdomains: 'abcd',
     maxZoom: 12,
     minZoom: 5,
@@ -107,7 +107,7 @@ function moveSlider(value) {
 
     // Remove old NLCD layer
     if (nlcdLayer) {
-        nlcdMap.removeLayer(nlcdLayer);
+        map.removeLayer(nlcdLayer);
     }
 
     // Add new NLCD layer based on year
@@ -115,7 +115,7 @@ function moveSlider(value) {
         attribution: 'NLCD ' + selectedYear
     });
 
-    nlcdLayer.addTo(nlcdMap);
+    nlcdLayer.addTo(map);
 
     filteredFeatures.forEach(function(feature) {
 
@@ -153,13 +153,7 @@ function moveSlider(value) {
 window.onload = function() {
     document.getElementById('dateSlider').value = 0;
     moveSlider(0);
-};
-    //  MAP 2 (NLCD)
-    var nlcdMap = L.map('nlcdMap').setView([40.3, -75.0], 7.5);
-
-    L.tileLayer("https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}", {
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(nlcdMap);
+}
 
     var nlcdTiles = {
     2008: 'https://manayiotou.github.io/GEOG456/2008tiles/{z}/{x}/{y}.png',
