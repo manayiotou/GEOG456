@@ -9,7 +9,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css">
     <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
-    
+    <script src="https://unpkg.com/scrollama"></script>
     <script src="GeeseData.js"></script>
 
     <style>
@@ -45,10 +45,29 @@
             text-align: center;
             margin: 20px;
         }
+        #scrolly {
+            width: 80%;
+            margin: auto;
+        }
+
+        .step {
+            margin: 200px 0;
+            padding: 50px;
+            background: lightgray;
+            font-size: 20px;
+        }
     </style>
 </head>
 <body>
 
+<div id="scrolly">
+
+  <div class="step" data-year="2008">2008: Baseline conditions</div>
+  <div class="step" data-year="2013">2013: Early changes</div>
+  <div class="step" data-year="2018">2018: Increasing development</div>
+  <div class="step" data-year="2023">2023: Recent patterns</div>
+
+</div>
 
 <div id="sliderContainer">
     <input type="range" id="dateSlider" min="0" max="3" step="1"
@@ -168,6 +187,23 @@ window.onload = function() {
 };
 
     var nlcdLayer = null;
+
+var scroller = scrollama();
+
+scroller
+    .setup({
+        step: ".step",
+        offset: 0.5
+    })
+    .onStepEnter(function(response) {
+
+        var year = parseInt(response.element.dataset.year);
+
+        var Years = [2008, 2013, 2018, 2023];
+        var index = Years.indexOf(year);
+
+        moveSlider(index);
+    });
 
 </script>
 
