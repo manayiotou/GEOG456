@@ -72,12 +72,12 @@
     <div id="graphic">
         <div id="map"></div>
     </div>
-
-  <div class="step" data-year="2008">2008: Baseline conditions</div>
-  <div class="step" data-year="2013">2013: Early changes</div>
-  <div class="step" data-year="2018">2018: Increasing development</div>
-  <div class="step" data-year="2023">2023: Recent patterns</div>
-
+    <div id="text">
+        <div class="step" data-year="2008">2008: Baseline conditions</div>
+        <div class="step" data-year="2013">2013: Early changes</div>
+        <div class="step" data-year="2018">2018: Increasing development</div>
+        <div class="step" data-year="2023">2023: Recent patterns</div>
+    </div>
 </div>
 
 <div id="sliderContainer">
@@ -185,9 +185,7 @@ function moveSlider(value) {
 // Initialize slider
 window.onload = function() {
     document.getElementById('dateSlider').value = 0;
-    moveSlider(0);
-
-
+    
     var nlcdTiles = {
     2008: 'https://manayiotou.github.io/GEOG456/2008tiles/{z}/{x}/{y}.png',
     2013: 'https://manayiotou.github.io/GEOG456/2013tiles/{z}/{x}/{y}.png',
@@ -195,7 +193,8 @@ window.onload = function() {
     2023: 'https://manayiotou.github.io/GEOG456/2023tiles/{z}/{x}/{y}.png'
     };
 
-    var nlcdLayer = null;
+    var nlcdLayer = null;   
+    moveSlider(0);
 
     var scroller = scrollama();
 
