@@ -34,26 +34,32 @@
             padding: 10px 20px;
             border-radius: 10px;
         }
-        
-        #map {
-            width: 50%;
-            height: 1300px;
-            margin: 20px auto;
-            border: 2px solid black;
-        }
 
         #sliderContainer {
             text-align: center;
             margin: 20px;
         }
         #scrolly {
-            width: 80%;
-            margin: auto;
+            display: flex;
+            width: 100%;
         }
-
+        #graphic {
+            position: sticky;
+            top: 0;
+            width: 60%;
+            height: 100vh;
+        }
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+        #text {
+            width: 40%;
+            padding: 40px;
+        }
         .step {
-            margin: 200px 0;
-            padding: 50px;
+            margin: 300px 0;
+            padding: 40px;
             background: lightgray;
             font-size: 20px;
         }
@@ -62,6 +68,10 @@
 <body>
 
 <div id="scrolly">
+
+    <div id="graphic">
+        <div id="map"></div>
+    </div>
 
   <div class="step" data-year="2008">2008: Baseline conditions</div>
   <div class="step" data-year="2013">2013: Early changes</div>
@@ -75,8 +85,6 @@
            oninput="moveSlider(this.value)">
     <p id="theDate"></p>
 </div>
-
-<div id="map"></div>
 
 <script> 
 var map = L.map('map', {
@@ -178,33 +186,36 @@ function moveSlider(value) {
 window.onload = function() {
     document.getElementById('dateSlider').value = 0;
     moveSlider(0);
-}
+
 
     var nlcdTiles = {
     2008: 'https://manayiotou.github.io/GEOG456/2008tiles/{z}/{x}/{y}.png',
     2013: 'https://manayiotou.github.io/GEOG456/2013tiles/{z}/{x}/{y}.png',
     2018: 'https://manayiotou.github.io/GEOG456/2018tiles/{z}/{x}/{y}.png',
     2023: 'https://manayiotou.github.io/GEOG456/2023tiles/{z}/{x}/{y}.png'
-};
+    };
 
     var nlcdLayer = null;
 
-var scroller = scrollama();
+    var scroller = scrollama();
 
-scroller
-    .setup({
-        step: ".step",
-        offset: 0.5
-    })
-    .onStepEnter(function(response) {
+    scroller.setup({
+            step: ".step",
+            offset: 0.5
+        })
+        .onStepEnter(function(response) {
 
-        var year = parseInt(response.element.dataset.year);
+            var year = parseInt(response.element.dataset.year);
 
-        var Years = [2008, 2013, 2018, 2023];
-        var index = Years.indexOf(year);
+            var Years = [2008, 2013, 2018, 2023];
+            var index = Years.indexOf(year);
 
-        moveSlider(index);
-    });
+            moveSlider(index);
+
+            document.getElementById('dateSlider').value = index;
+        });
+        window.addEventListener('resize', scroller.resize);
+};
 
 </script>
 
