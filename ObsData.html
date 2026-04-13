@@ -36,7 +36,6 @@
         }
         
         #map {
-            align-items: right;
             width: 50%;
             height: 1300px;
             margin: 20px auto;
@@ -62,6 +61,8 @@
 <script>
     //  MAP 1 (GEESE) 
 var map = L.map('map').setView([40.15, -74.75], 9);
+map.createPane('nlcdPane');
+map.getPane('nlcdPane').style.zIndex = 200;
 
 L.tileLayer("https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}", {
     attribution: '&copy; OpenStreetMap contributors',
@@ -79,7 +80,21 @@ var gooseIcon = L.icon({
 // Main function
 function moveSlider(value) {
 
-    // Remove all previous cluster layers
+    // Remove old NLCD layer
+    if (nlcdLayer) {
+        map.removeLayer(nlcdLayer);
+    }
+
+    // Add new NLCD layer based on year
+    nlcdLayer = L.tileLayer(nlcdTiles[selectedYear], {  
+        attribution: 'NLCD ' + selectedYear,
+        pane: 'nlcdPane',
+        opacity: 0.6
+    });
+
+    nlcdLayer.addTo(map);
+
+    // Remove previous cluster layers
     map.eachLayer(function(layer) {
         if (layer instanceof L.MarkerClusterGroup) {
             map.removeLayer(layer);
@@ -104,18 +119,6 @@ function moveSlider(value) {
         var obsYear = parseInt(feature.properties.year);
         return obsYear === selectedYear;
     });
-
-    // Remove old NLCD layer
-    if (nlcdLayer) {
-        map.removeLayer(nlcdLayer);
-    }
-
-    // Add new NLCD layer based on year
-    nlcdLayer = L.tileLayer(nlcdTiles[selectedYear], {
-        attribution: 'NLCD ' + selectedYear
-    });
-
-    nlcdLayer.addTo(map);
 
     filteredFeatures.forEach(function(feature) {
 
