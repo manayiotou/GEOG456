@@ -8,12 +8,10 @@
     <!-- Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-    <!-- Marker Cluster -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css">
     <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
 
-    <!-- Your data -->
+    <!-- Data -->
     <script src="GeeseData.js"></script>
 
     <style>
@@ -38,117 +36,13 @@
             padding: 10px 20px;
             border-radius: 10px;
         }
-
-        /* NEW: layout for scroll + map */
-        #container {
-            display: flex;
-        }
-
-        #story {
-            width: 35%;
-            height: 100vh;
-            overflow-y: scroll;
-            padding: 20px;
-            background: #f5f5f5;
-        }
-
-        #map {
-            width: 65%;
-            height: 100vh;
-            position: sticky;
-            top: 0;
-        }
-
-        .step {
-            margin-bottom: 300px;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-        }
     </style>
 </head>
-
 <body>
-
-<!-- YOUR ORIGINAL HEADER -->
 <header>
     <h1>Visualizing Canadian Geese Observations in New Jersey</h1>
 </header>
 
-<!-- NEW: SCROLL + MAP CONTAINER -->
-<div id="container">
-
-    <!-- SCROLLING TEXT -->
-    <div id="story">
-
-        <section class="step" data-lat="40.0583" data-lng="-74.4057" data-zoom="7">
-            <h2>Statewide Distribution</h2>
-            <p>Canadian geese observations occur across New Jersey, with clusters forming in both urban and natural landscapes.</p>
-        </section>
-
-        <section class="step" data-lat="40.7357" data-lng="-74.1724" data-zoom="10">
-            <h2>Urban Clustering</h2>
-            <p>Higher densities of geese are observed in developed areas, suggesting adaptation to human-modified environments.</p>
-        </section>
-
-        <section class="step" data-lat="39.3643" data-lng="-74.4229" data-zoom="11">
-            <h2>Coastal & Wetlands</h2>
-            <p>Coastal regions and wetlands provide key habitat, reflected in concentrated observations near shorelines.</p>
-        </section>
-
-    </div>
-
-    <!-- MAP -->
-    <div id="map"></div>
-
-</div>
-
-<script>
-    // MAP SETUP (Leaflet)
-    var map = L.map('map').setView([40.0583, -74.4057], 7);
-
-    // Base layer
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
-
-    // LOAD GEESE DATA
-    var markers = L.markerClusterGroup();
-
-    if (typeof geeseData !== 'undefined') {
-        L.geoJSON(geeseData, {
-            pointToLayer: function (feature, latlng) {
-                return L.marker(latlng);
-            }
-        }).eachLayer(function(layer) {
-            markers.addLayer(layer);
-        });
-    }
-
-    map.addLayer(markers);
-
-    // SCROLL INTERACTION
-    const steps = document.querySelectorAll('.step');
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const lat = parseFloat(entry.target.dataset.lat);
-                const lng = parseFloat(entry.target.dataset.lng);
-                const zoom = parseInt(entry.target.dataset.zoom);
-
-                map.flyTo([lat, lng], zoom, {
-                    duration: 2
-                });
-            }
-        });
-    }, {
-        threshold: 0.6
-    });
-
-    steps.forEach(step => observer.observe(step));
-
-</script>
 
 </body>
 </html>

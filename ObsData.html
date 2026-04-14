@@ -4,12 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Final Map</title>
+
     <!-- Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Marker Cluster -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css">
     <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
-    <script src="https://unpkg.com/scrollama"></script>
+
+    <!-- Your data -->
     <script src="GeeseData.js"></script>
 
     <style>
@@ -20,7 +24,7 @@
 
         header {
             background-image: url('https://www.mcall.com/wp-content/uploads/migration/2021/06/12/GXYS2SGPF5BARD67VMW6FRVL5U.jpg');
-            height: 400px;
+            height: 800px;
             background-size: cover;
             display: flex;
             align-items: center;
@@ -35,186 +39,120 @@
             border-radius: 10px;
         }
 
-        #sliderContainer {
-            text-align: center;
-            margin: 20px;
-        }
-        #scrolly {
+        /* NEW: layout for scroll + map */
+        #container {
             display: flex;
-            width: 100%;
         }
-        #graphic {
+
+        #story {
+            width: 35%;
+            height: 100vh;
+            overflow-y: scroll;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        #map {
+            width: 65%;
+            height: 100vh;
             position: sticky;
             top: 0;
-            width: 60%;
-            height: 100vh;
         }
-        #map {
-            width: 100%;
-            height: 100%;
-        }
-        #text {
-            width: 40%;
-            padding: 40px;
-        }
+
         .step {
-            margin: 300px 0;
-            padding: 40px;
-            background: lightgray;
-            font-size: 20px;
+            margin-bottom: 300px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
         }
     </style>
 </head>
+
 <body>
 
-<div id="scrolly">
+<!-- YOUR ORIGINAL HEADER -->
+<header>
+    <h1>Visualizing Canadian Geese Observations in New Jersey</h1>
+</header>
 
-    <div id="graphic">
-        <div id="map"></div>
+<!-- NEW: SCROLL + MAP CONTAINER -->
+<div id="container">
+
+    <!-- SCROLLING TEXT -->
+    <div id="story">
+
+        <section class="step" data-lat="40.0583" data-lng="-74.4057" data-zoom="7">
+            <h2>Statewide Distribution</h2>
+            <p>Canadian geese observations occur across New Jersey, with clusters forming in both urban and natural landscapes.</p>
+        </section>
+
+        <section class="step" data-lat="40.7357" data-lng="-74.1724" data-zoom="10">
+            <h2>Urban Clustering</h2>
+            <p>Higher densities of geese are observed in developed areas, suggesting adaptation to human-modified environments.</p>
+        </section>
+
+        <section class="step" data-lat="39.3643" data-lng="-74.4229" data-zoom="11">
+            <h2>Coastal & Wetlands</h2>
+            <p>Coastal regions and wetlands provide key habitat, reflected in concentrated observations near shorelines.</p>
+        </section>
+
     </div>
-    <div id="text">
-        <div class="step" data-year="2008">2008: Baseline conditions</div>
-        <div class="step" data-year="2013">2013: Early changes</div>
-        <div class="step" data-year="2018">2018: Increasing development</div>
-        <div class="step" data-year="2023">2023: Recent patterns</div>
-    </div>
+
+    <!-- MAP -->
+    <div id="map"></div>
+
 </div>
 
-<div id="sliderContainer">
-    <input type="range" id="dateSlider" min="0" max="3" step="1"
-           oninput="moveSlider(this.value)">
-    <p id="theDate"></p>
-</div>
+<script>
+    // =========================
+    // MAP SETUP (Leaflet)
+    // =========================
+    var map = L.map('map').setView([40.0583, -74.4057], 7);
 
-<script> 
-var map = L.map('map', {
-    minZoom: 5,
-    maxZoom: 12
-}).setView([40.15, -74.75], 9);
-    map.createPane('nlcdPane');
-    map.getPane('nlcdPane').style.zIndex = 200;
+    // Base layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
 
-L.tileLayer("https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}", {
-    attribution: '&copy; OpenStreetMap contributors',
-    subdomains: 'abcd',
-    maxZoom: 12,
-    minZoom: 5,
-}).addTo(map);
+    // =========================
+    // LOAD GEESE DATA
+    // =========================
+    var markers = L.markerClusterGroup();
 
-var gooseIcon = L.icon({
-    iconUrl: 'https://www.pngarts.com/files/4/Goose-Transparent-Image.png',
-    iconSize: [40, 30],
-    iconAnchor: [20, 15]
-});
-
-// Main function
-function moveSlider(value) {
-
-    // Remove previous cluster layers
-    map.eachLayer(function(layer) {
-        if (layer instanceof L.MarkerClusterGroup) {
-            map.removeLayer(layer);
-        }
-    });
-
-    var Years = [2008, 2013, 2018, 2023];
-    var selectedYear = Years[value];
-
-    document.getElementById('theDate').innerHTML =
-        'Year: ' + selectedYear;
-
-    // Remove old NLCD layer
-    if (nlcdLayer) {
-        map.removeLayer(nlcdLayer);
-    }
-
-    // Add new NLCD layer based on year
-    nlcdLayer = L.tileLayer(nlcdTiles[selectedYear], {  
-        attribution: 'NLCD ' + selectedYear,
-        pane: 'nlcdPane',
-        opacity: 0.6
-    });
-
-    nlcdLayer.addTo(map);
-
-    var countyGroups = {};
-
-    var filteredFeatures = geeseObservations.features.filter(function(feature) {
-
-        if (!feature.geometry || !feature.geometry.coordinates) return false;
-
-        var coords = feature.geometry.coordinates;
-        if (coords[0] == null || coords[1] == null) return false;
-
-        var obsYear = parseInt(feature.properties.year);
-        return obsYear === selectedYear;
-    });
-
-    filteredFeatures.forEach(function(feature) {
-
-        var coords = feature.geometry.coordinates;
-        var props = feature.properties;
-
-        var county = props.county || props.locality || "Unknown";
-
-        // Create cluster group for county if needed
-        if (!countyGroups[county]) {
-            countyGroups[county] = L.markerClusterGroup();
-        }
-
-        var marker = L.marker(
-            [coords[1], coords[0]],
-            { icon: gooseIcon }
-        );
-
-        marker.bindPopup(
-            "<b>County:</b> " + county +
-            "<br><b>Year:</b> " + props.year +
-            "<br><b>Count:</b> " + (props.individualCount || "N/A")
-        );
-
-        countyGroups[county].addLayer(marker);
-    });
-
-    // Add all county clusters to map
-    for (var county in countyGroups) {
-        map.addLayer(countyGroups[county]);
-    }
-}
-
-// Initialize slider
-window.onload = function() {
-    document.getElementById('dateSlider').value = 0;
-    
-    var nlcdTiles = {
-    2008: 'https://manayiotou.github.io/GEOG456/2008tiles/{z}/{x}/{y}.png',
-    2013: 'https://manayiotou.github.io/GEOG456/2013tiles/{z}/{x}/{y}.png',
-    2018: 'https://manayiotou.github.io/GEOG456/2018tiles/{z}/{x}/{y}.png',
-    2023: 'https://manayiotou.github.io/GEOG456/2023tiles/{z}/{x}/{y}.png'
-    };
-
-    var nlcdLayer = null;   
-    moveSlider(0);
-
-    var scroller = scrollama();
-
-    scroller.setup({
-            step: ".step",
-            offset: 0.5
-        })
-        .onStepEnter(function(response) {
-
-            var year = parseInt(response.element.dataset.year);
-
-            var Years = [2008, 2013, 2018, 2023];
-            var index = Years.indexOf(year);
-
-            moveSlider(index);
-
-            document.getElementById('dateSlider').value = index;
+    if (typeof geeseData !== 'undefined') {
+        L.geoJSON(geeseData, {
+            pointToLayer: function (feature, latlng) {
+                return L.marker(latlng);
+            }
+        }).eachLayer(function(layer) {
+            markers.addLayer(layer);
         });
-        window.addEventListener('resize', scroller.resize);
-};
+    }
+
+    map.addLayer(markers);
+
+    // =========================
+    // SCROLL INTERACTION
+    // =========================
+    const steps = document.querySelectorAll('.step');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const lat = parseFloat(entry.target.dataset.lat);
+                const lng = parseFloat(entry.target.dataset.lng);
+                const zoom = parseInt(entry.target.dataset.zoom);
+
+                map.flyTo([lat, lng], zoom, {
+                    duration: 2
+                });
+            }
+        });
+    }, {
+        threshold: 0.6
+    });
+
+    steps.forEach(step => observer.observe(step));
 
 </script>
 
