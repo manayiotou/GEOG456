@@ -45,8 +45,9 @@
             font-size: 20px;
             background: lightblue;
         }
-        .leaflet-tile {
-            filter: contrast(1.2) saturate(1.3);
+        #sliderContainer {
+            padding: 20px;
+            text-align: center;
         }
 </style>
 </head>
@@ -57,86 +58,87 @@
     <div id="graphic">
         <div id="map"></div>
     </div>
+
     <div id="text">
-        <div class="step" data-year="2008">2008: Baseline conditions</div>
-        <div class="step" data-year="2013">2013: Early changes</div>
-        <div class="step" data-year="2018">2018: Increasing development</div>
-        <div class="step" data-year="2023">2023: Recent patterns</div>
-    
+        <div class="step" data-step="step1">Wetland system overview</div>
+        <div class="step" data-step="step2">Early development expansion</div>
+        <div class="step" data-step="step3">Suburban growth zones</div>
+        <div class="step" data-step="step4">Urban intensification</div>
+        <div class="step" data-step="step5">Current landscape patterns</div>
+    </div>
+
+</div>
+
+<!-- Slider (DATA ONLY) -->
+<div id="sliderContainer">
+    <input type="range" id="yearSlider" min="0" max="3" step="1">
+    <p id="yearLabel"></p>
 </div>
 
 <script>
+
+// DATA CONFIG
+var years = [2008, 2013, 2018, 2023];
+
 var nlcdTiles = {
-        2008: 'https://manayiotou.github.io/GEOG456/2008tiles/{z}/{x}/{y}.png',
-        2013: 'https://manayiotou.github.io/GEOG456/2013tiles/{z}/{x}/{y}.png',
-        2018: 'https://manayiotou.github.io/GEOG456/2018tiles/{z}/{x}/{y}.png',
-        2023: 'https://manayiotou.github.io/GEOG456/2023tiles/{z}/{x}/{y}.png'
-    };
+    2008: 'https://manayiotou.github.io/GEOG456/2008tiles/{z}/{x}/{y}.png',
+    2013: 'https://manayiotou.github.io/GEOG456/2013tiles/{z}/{x}/{y}.png',
+    2018: 'https://manayiotou.github.io/GEOG456/2018tiles/{z}/{x}/{y}.png',
+    2023: 'https://manayiotou.github.io/GEOG456/2023tiles/{z}/{x}/{y}.png'
+};
+
+var scrollViews = {
+    step1: { center: [40.30, -74.80], zoom: 8 },
+    step2: { center: [40.35, -74.60], zoom: 9 },
+    step3: { center: [40.25, -74.85], zoom: 10 },
+    step4: { center: [40.10, -74.90], zoom: 10 },
+    step5: { center: [40.05, -74.70], zoom: 11 }
+};
+
+// MAP SETUP
+var map = L.map('map').setView([40.15, -74.75], 9);
+
+var base = L.tileLayer(
+    "https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
+    { maxZoom: 12 }
+).addTo(map);
+
+map.createPane('nlcdPane');
+map.getPane('nlcdPane').style.zIndex = 350;
 
 var nlcdLayer = null;
 var heatLayer = null;
-var highlightLayer = null;
 
-var map = L.map('map', {
-    minZoom: 5,
-    maxZoom: 12
-}).setView([40.15, -74.75], 9);
 
-map.createPane('nlcdPane');
-map.getPane('nlcdPane').style.zIndex = 450;
+// Slider Control 
+function  updateMap(year) {
 
-L.tileLayer("https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}", {
-    attribution: '&copy; OpenStreetMap contributors',
-    subdomains: 'abcd',
-    maxZoom: 12,
-    minZoom: 5,
-}).addTo(map);
+    // update label
+    document.getElementById("yearLabel").innerHTML = "Year: " + year;
 
-function updateMap(selectedYear) {
+    // remove old layers
+    if (nlcdLayer) map.removeLayer(nlcdLayer);
+    if (heatLayer) map.removeLayer(heatLayer);
 
-    // Remove old NLCD
-    if (nlcdLayer) {
-        map.removeLayer(nlcdLayer);
-    }
-
-    // Add NLCD
-    nlcdLayer = L.tileLayer(nlcdTiles[selectedYear], {
+    // NLCD layer
+    nlcdLayer = L.tileLayer(nlcdTiles[year], {
         pane: 'nlcdPane',
         opacity: 0.6
     }).addTo(map);
 
-    // Remove old heatmap
-    if (heatLayer) {
-        map.removeLayer(heatLayer);
-    }
+    // filter data
+    var filtered = geeseObservations.features.filter(f =>
+        parseInt(f.properties.year) === year
+    );
 
-    // Filter data
-    var filteredFeatures = geeseObservations.features.filter(function(feature) {
-        if (!feature.geometry || !feature.geometry.coordinates) return false;
-
-        var coords = feature.geometry.coordinates;
-        if (coords[0] == null || coords[1] == null) return false;
-
-        var year = parseInt(feature.properties.year);
-        return year === selectedYear;
+    // heatmap data
+    var heatData = filtered.map(f => {
+        var c = f.geometry.coordinates;
+        var count = Math.log((f.properties.individualCount || 1) + 1);
+        return [c[1], c[0], count];
     });
 
-    // Build heatmap data
-    var heatData = [];
-
-    filteredFeatures.forEach(function(feature) {
-        var coords = feature.geometry.coordinates;
-        var props = feature.properties;
-
-        var count = parseInt(props.individualCount) || 1;
-
-        // Normalize (important!)
-        count = Math.log(count + 1);
-
-        heatData.push([coords[1], coords[0], count]);
-    });
-
-    // Create heatmap
+    // heat layer
     heatLayer = L.heatLayer(heatData, {
         radius: 30,
         blur: 20,
@@ -147,33 +149,35 @@ function updateMap(selectedYear) {
             0.6: 'orange',
             1.0: 'red'
         }
-    });
-
-    heatLayer.addTo(map);
+    }).addTo(map);
 }
 
-// SCROLLAMA 
-
+// SCROLL CONTROL (CAMERA ONLY)
 var scroller = scrollama();
 
 scroller.setup({
     step: ".step",
     offset: 0.6
-})
-.onStepEnter(function(response) {
+}).onStepEnter(function(response) {
 
-    var year = parseInt(response.element.dataset.year);
+    var step = response.element.dataset.step;
+    var view = scrollViews[step];
 
-    updateMap(year);
+    map.flyTo(view.center, view.zoom, {
+        duration: 1.5
+    });
 });
 
-// Resize fix
 window.addEventListener('resize', scroller.resize);
 
-//  INITIAL LOAD 
+// SLIDER CONTROL
+document.getElementById("yearSlider").oninput = function () {
+    var year = years[this.value];
+    updateMap(year);
+};
+
 updateMap(2008);
 
 </script>
-
 </body>
 </html>
