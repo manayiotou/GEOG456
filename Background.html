@@ -69,7 +69,33 @@
     <h1>History</h1>
 </header>
 
+<div id="scrolly">
 
+    <div id="graphic">
+        <div id="map"></div>
+    </div>
+
+    <div id="text">
+        <div class="step" data-step="step1">Wetland system overview</div>
+        <div class="step" data-step="step2">Early development expansion</div>
+        <div class="step" data-step="step3">Suburban growth zones</div>
+        <div class="step" data-step="step4">Urban intensification</div>
+        <div class="step" data-step="step5">Current landscape patterns</div>
+    </div>
+
+</div>
+<script>
+var scrollViews = {
+    step1: { center: [40.15, -74.75], zoom: 9 },
+    step2: { center: [40.35, -74.60], zoom: 10 },
+    step3: { center: [40.25, -74.85], zoom: 12 },
+    step4: { center: [40.10, -74.90], zoom: 12 },
+    step5: { center: [40.05, -74.70], zoom: 12 }
+};
+
+// MAP SETUP
+var map = L.map('map').setView([40.15, -74.75], 9);
+</script>
 
 </body>
 </html>
