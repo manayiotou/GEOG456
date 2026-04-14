@@ -129,12 +129,6 @@ function  updateMap(year) {
     var filtered = geeseObservations.features.filter(f =>
         parseInt(f.properties.year) === year
     );
-
-    var heatLayer = L.heatLayer([], {
-        radius: 30,
-        blur: 20,
-        maxZoom: 12
-    }).addTo(map);
     // heatmap data
     var heatData = filtered.map(f => {
         var c = f.geometry.coordinates;
@@ -143,12 +137,11 @@ function  updateMap(year) {
     });
 
     // heat layer
-    var heatLayer = L.heatLayer([], {
+    heatLayer = L.heatLayer([], {
         radius: 30,
         blur: 20,
         maxZoom: 12
     }).addTo(map);
-    // update instead of recreate
     heatLayer.setLatLngs(heatData);
 
 
