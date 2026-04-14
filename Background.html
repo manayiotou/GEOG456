@@ -1,106 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Final Map</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geese & Development</title>
 
-    <!-- Leaflet -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css">
-    <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+<!-- Leaflet (for small map) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    <!-- Data -->
-    <script src="GeeseData.js"></script>
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+}
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
-        header {
-            background-image: url('https://cdn-ul.uli.org/dims4/default/3014152/2147483647/strip/true/crop/1024x577+0+96/resize/1000x563!/quality/90/?url=https%3A%2F%2Fk2-prod-uli.s3.us-east-1.amazonaws.com%2Fbrightspot%2F41%2F8d%2F3d0568704dc1af0a44a27b9af1b1%2Fjersey-city-skyline-sunset-cropped.gif');
-            height: 800px;
-            background-size: cover;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        h1 {
-            color: black;
-            font-size: 40px;
-            background-color: rgba(255,255,255,0.7);
-            padding: 10px 20px;
-            border-radius: 10px;
-        }
-        #scrolly {
-            display: flex;
-            width: 100%;
-            direction: rtl;
-        }
-        #graphic {
-            position: sticky;
-            top: 0;
-            width: 60%;
-            height: 100vh;
-        }
-        #map {
-            width: 100%;
-            height: 100%;
-        }
-        #text {
-            width: 40%;
-            padding: 40px;
-        }
-        .step {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px;
-            font-size: 20px;
-            background: lightblue;
-        }
-    </style>
+/* HERO */
+.hero {
+    height: 100vh;
+    background-image: url('https://www.mcall.com/wp-content/uploads/migration/2021/06/12/GXYS2SGPF5BARD67VMW6FRVL5U.jpg');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-text {
+    background: rgba(255,255,255,0.85);
+    padding: 40px;
+    border-radius: 12px;
+    max-width: 700px;
+    text-align: center;
+}
+
+.hero-text h1 {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+/* CONTENT */
+.content {
+    padding: 60px;
+    max-width: 900px;
+    margin: auto;
+}
+
+/* MAP */
+#mini-map {
+    height: 400px;
+    margin: 40px 0;
+    border-radius: 10px;
+}
+
+/* BUTTON */
+.map-button {
+    display: inline-block;
+    margin-top: 30px;
+    padding: 15px 25px;
+    background: #2c7fb8;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 18px;
+}
+
+.map-button:hover {
+    background: #1c5d87;
+}
+
+/* FIGURE */
+.figure {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.figure img {
+    width: 70%;
+    border-radius: 10px;
+}
+</style>
 </head>
+
 <body>
 
-<header>
-    <h1>History</h1>
-</header>
+<!-- HERO -->
+<div class="hero">
+    <div class="hero-text">
+        <h1>Canada Geese & Urban Development</h1>
+        <p>How human landscapes reshape wildlife distribution in New Jersey</p>
+    </div>
+</div>
 
-<div id="scrolly">
+<!-- CONTENT -->
+<div class="content">
 
-    <div id="graphic">
-        <div id="map"></div>
+    <h2>Background</h2>
+
+    <p>
+    Canada geese have increasingly established large resident populations in suburban 
+    and urban environments across the northeastern United States. Unlike migratory populations, 
+    these geese thrive in human-modified landscapes where food and habitat are consistently available.
+    </p>
+
+    <p>
+    Patterns of land development play a critical role in shaping these environments. Suburban expansion 
+    introduces large areas of maintained grass, stormwater retention ponds, and fragmented wetlands—
+    all of which provide ideal conditions for geese. As a result, developed land can support higher 
+    densities of geese than more natural or forested landscapes.
+    </p>
+
+    <p>
+    New Jersey represents an ideal case study due to its extensive suburban development and rapidly 
+    changing land cover over recent decades. This project explores how land development patterns relate 
+    to the spatial distribution and density of Canada goose observations over time.
+    </p>
+
+    <!-- MINI MAP -->
+    <h2>Study Area</h2>
+    <div id="mini-map"></div>
+
+    <!-- OPTIONAL FIGURE -->
+    <div class="figure">
+        <h3>Example Analysis</h3>
+        <img src="your-figure.png" alt="Regression or analysis figure">
+        <p>Relationship between developed land cover and goose density.</p>
     </div>
 
-    <div id="text">
-        <div class="step" data-step="step1">Wetland system overview</div>
-        <div class="step" data-step="step2">Early development expansion</div>
-        <div class="step" data-step="step3">Suburban growth zones</div>
-        <div class="step" data-step="step4">Urban intensification</div>
-        <div class="step" data-step="step5">Current landscape patterns</div>
-    </div>
+    <!-- BUTTON TO MAIN MAP -->
+    <a href="map.html" class="map-button">
+        Explore the Interactive Map →
+    </a>
 
 </div>
+
 <script>
-var scrollViews = {
-    step1: { center: [40.15, -74.75], zoom: 9 },
-    step2: { center: [40.35, -74.60], zoom: 10 },
-    step3: { center: [40.25, -74.85], zoom: 12 },
-    step4: { center: [40.10, -74.90], zoom: 12 },
-    step5: { center: [40.05, -74.70], zoom: 12 }
-};
 
-// MAP SETUP
-var map = L.map('map').setView([40.15, -74.75], 9);
+// MINI MAP (simple context map)
+var miniMap = L.map('mini-map').setView([40.15, -74.75], 8);
 
-var base = L.tileLayer(
-    "https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
-    { maxZoom: 12 }
-).addTo(map);
+L.tileLayer(
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    { attribution: "&copy; OpenStreetMap contributors" }
+).addTo(miniMap);
+
+// Optional: add a marker or bounding box
+L.marker([40.15, -74.75]).addTo(miniMap)
+    .bindPopup("Study Area: New Jersey");
+
 </script>
 
 </body>
