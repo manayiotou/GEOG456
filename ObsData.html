@@ -143,9 +143,21 @@ function  updateMap(year) {
         return [c[1], c[0], count];
     });
 
-    // update instead of recreate
-    heatLayer.setLatLngs(heatData);
-    }
+    // heat layer
+    heatLayer = L.heatLayer(heatData, {
+        radius: 30,
+        blur: 20,
+        maxZoom: 12,
+        gradient: {
+            0.1: 'blue',
+            0.3: 'lime',
+            0.6: 'orange',
+            1.0: 'red'
+        }
+    }).addTo(map);
+
+    
+}
 
 // SCROLL CONTROL (CAMERA ONLY)
 var scroller = scrollama();
