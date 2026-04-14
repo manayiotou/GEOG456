@@ -84,13 +84,6 @@ var map = L.map('map', {
 
 map.createPane('nlcdPane');
 map.getPane('nlcdPane').style.zIndex = 450;
-map.createPane('basemapPane');
-map.getPane('basemapPane').style.zIndex = 250;
-
-L.tileLayer(url, {
-    pane: 'basemapPane',
-    attribution: '&copy; OpenStreetMap contributors'
-}).addTo(map);
 
 L.tileLayer("https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}", {
     attribution: '&copy; OpenStreetMap contributors',
