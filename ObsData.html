@@ -52,7 +52,6 @@
 </style>
 </head>
 <body>
-
 <div id="scrolly">
 
     <div id="graphic">
@@ -94,6 +93,12 @@ var scrollViews = {
     step4: { center: [40.10, -74.90], zoom: 10 },
     step5: { center: [40.05, -74.70], zoom: 11 }
 };
+
+var heatLayer = L.heatLayer([], {
+    radius: 30,
+    blur: 20,
+    maxZoom: 12
+}).addTo(map);
 
 // MAP SETUP
 var map = L.map('map').setView([40.15, -74.75], 9);
@@ -138,19 +143,9 @@ function  updateMap(year) {
         return [c[1], c[0], count];
     });
 
-    // heat layer
-    heatLayer = L.heatLayer(heatData, {
-        radius: 30,
-        blur: 20,
-        maxZoom: 12,
-        gradient: {
-            0.1: 'blue',
-            0.3: 'lime',
-            0.6: 'orange',
-            1.0: 'red'
-        }
-    }).addTo(map);
-}
+    // update instead of recreate
+    heatLayer.setLatLngs(heatData);
+    }
 
 // SCROLL CONTROL (CAMERA ONLY)
 var scroller = scrollama();
