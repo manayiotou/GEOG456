@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Final Map</title>
 
-<!-- Leaflet -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -70,7 +69,7 @@ body {
     line-height: 1.5;
 }
 
-/* Slider */
+/* SLIDER */
 #sliderContainer {
     position: fixed;
     top: 20px;
@@ -82,9 +81,46 @@ body {
     font-weight: bold;
     background-color: lightblue;
     border-radius: 10px;
-    border-color: navy;
-    border-width: 5px;
-    border-style: solid;
+    border: 5px solid navy;
+    z-index: 999;
+}
+
+/* =======================
+   LEGENDS (BOTTOM LEFT)
+======================= */
+.legend {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: white;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.4;
+    box-shadow: 0 0 8px rgba(0,0,0,0.25);
+    z-index: 999;
+}
+
+.legend h4 {
+    margin: 0 0 6px 0;
+}
+
+/* stack second legend slightly above */
+#heatLegend {
+    bottom: 120px;
+}
+
+.legend div {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.legend span {
+    width: 14px;
+    height: 14px;
+    margin-right: 8px;
+    display: inline-block;
 }
 </style>
 </head>
@@ -95,66 +131,69 @@ body {
 
 <div id="graphic">
     <div id="map"></div>
+
+    <!-- NLCD LEGEND -->
+    <div class="legend" id="nlcdLegend">
+        <h4>NLCD Land Cover</h4>
+        <div><span style="background:#e31a1c;"></span> Developed</div>
+        <div><span style="background:#33a02c;"></span> Forest</div>
+        <div><span style="background:#1f78b4;"></span> Water</div>
+        <div><span style="background:#ffcc00;"></span> Agriculture</div>
+    </div>
+
+    <!-- HEATMAP LEGEND -->
+    <div class="legend" id="heatLegend">
+        <h4>Geese Density</h4>
+        <div><span style="background:blue;"></span> Low</div>
+        <div><span style="background:lime;"></span> Medium</div>
+        <div><span style="background:red;"></span> High</div>
+    </div>
+
 </div>
 
 <div id="text">
 
-<!-- STEP 1 -->
 <div class="step" data-step="step1">
 <div>
 <h2>State Overview</h2>
 <p>
-From 2008 to 2023, New Jersey experiences steady expansion of developed land, especially along the I-95 
-corridor and major metropolitan regions. Forest and agricultural lands become increasingly fragmented, while geese 
-populations concentrate near wetlands, reservoirs, and suburban open space.
+From 2008–2023, New Jersey shows steady urban expansion along major corridors. Land becomes more fragmented, increasing edge habitat used by geese.
 </p>
 </div>
 </div>
 
-<!-- STEP 2 -->
 <div class="step" data-step="step2">
 <div>
-<h2>Newark / Urban Core</h2>
+<h2>Newark</h2>
 <p>
-Newark remains one of the most intensely developed areas in the state across all years. Land cover 
-shows little structural change, but surrounding suburban expansion increases over time. Canada geese are 
-primarily concentrated in parks, reservoirs, and industrial-adjacent green infrastructure.
+Highly urbanized across all years with minimal land cover change. Geese concentrate in parks and water infrastructure.
 </p>
 </div>
 </div>
 
-<!-- STEP 3 -->
 <div class="step" data-step="step3">
 <div>
-<h2>Trenton Region</h2>
+<h2>Trenton</h2>
 <p>
-The Trenton area shows moderate but clear suburban growth between 2008 and 2023. Agricultural and 
-semi-natural land is gradually converted into residential and commercial development, creating 
-fragmented edge habitats that increase suitable environments for geese.
+Moderate suburban growth replaces agricultural land, increasing fragmented habitat.
 </p>
 </div>
 </div>
 
-<!-- STEP 4 -->
 <div class="step" data-step="step4">
 <div>
-<h2>Coastal New Jersey</h2>
+<h2>Coast</h2>
 <p>
-Along the Jersey Shore, development intensifies in tourism-driven towns and barrier island communities.
- While built environments expand, wetlands and coastal marshes remain important ecological zones that 
- strongly influence geese distribution patterns.
+Tourism-driven development expands along barrier islands while wetlands remain critical habitat.
 </p>
 </div>
 </div>
 
-<!-- STEP 5 -->
 <div class="step" data-step="step5">
 <div>
-<h2>Inland New Jersey</h2>
+<h2>Inland</h2>
 <p>
-Inland regions experience the most visible land transformation, with suburban sprawl replacing forests 
-and agricultural land over time. This creates a patchwork landscape of fragmented habitats and open spaces
- that strongly support adaptable species like Canada geese.
+Suburban sprawl replaces forests and farmland, producing patchy landscapes ideal for geese.
 </p>
 </div>
 </div>
@@ -162,7 +201,7 @@ and agricultural land over time. This creates a patchwork landscape of fragmente
 </div>
 </div>
 
-<!-- Slider -->
+<!-- SLIDER -->
 <div id="sliderContainer">
 <input type="range" id="yearSlider" min="0" max="3" step="1" value="0">
 <p id="yearLabel"></p>
@@ -170,7 +209,6 @@ and agricultural land over time. This creates a patchwork landscape of fragmente
 
 <script>
 
-// DATA CONFIG
 var years = [2008, 2013, 2018, 2023];
 
 var nlcdTiles = {
@@ -188,12 +226,10 @@ var scrollViews = {
     step5: { center: [40.10, -74.55], zoom: 11 }
 };
 
-// MAP SETUP
 var map = L.map('map').setView([40.15, -74.75], 8.5);
 
-var base = L.tileLayer(
-    "https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
-    { maxZoom: 15 }
+L.tileLayer(
+    "https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"
 ).addTo(map);
 
 map.createPane('nlcdPane');
@@ -202,7 +238,6 @@ map.getPane('nlcdPane').style.zIndex = 350;
 var nlcdLayer = null;
 var heatLayer = null;
 
-// UPDATE MAP
 function updateMap(year) {
 
     document.getElementById("yearLabel").innerHTML = "Year: " + year;
@@ -225,37 +260,28 @@ function updateMap(year) {
         return [c[1], c[0], count];
     });
 
-    heatLayer = L.heatLayer([], {
+    heatLayer = L.heatLayer(heatData, {
         radius: 30,
         blur: 20,
         maxZoom: 12
     }).addTo(map);
-
-    heatLayer.setLatLngs(heatData);
 }
 
-// SCROLL CONTROL
 var scroller = scrollama();
 
 scroller.setup({
     step: ".step",
     offset: 0.6
 }).onStepEnter(function(response) {
-
     var step = response.element.dataset.step;
     var view = scrollViews[step];
-
-    map.flyTo(view.center, view.zoom, {
-        duration: 1.5
-    });
+    map.flyTo(view.center, view.zoom, { duration: 1.5 });
 });
 
 window.addEventListener('resize', scroller.resize);
 
-// SLIDER CONTROL
 document.getElementById("yearSlider").oninput = function () {
-    var year = years[this.value];
-    updateMap(year);
+    updateMap(years[this.value]);
 };
 
 updateMap(2008);
