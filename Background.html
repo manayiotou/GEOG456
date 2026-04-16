@@ -148,11 +148,10 @@ L.tileLayer(
 ).addTo(miniMap);
 
 var years = [1990, 2000, 2010, 2020];
-
 var countiesLayer;
 
 // --------------------
-// COLOR FUNCTION
+// COLOR SCALE
 // --------------------
 
 function getColor(d) {
@@ -182,7 +181,7 @@ function styleFeature(feature, year) {
 }
 
 // --------------------
-// HOVER FUNCTIONS
+// HOVER
 // --------------------
 
 function highlightFeature(e) {
@@ -213,22 +212,23 @@ fetch('njCounties.geojson')
 
         onEachFeature: function(feature, layer) {
 
-            var name = feature.properties.NAME || "County";
-
-            layer.bindPopup(name);
+            layer.bindPopup(
+                feature.properties.NAME || "County"
+            );
 
             layer.on({
                 mouseover: highlightFeature,
                 mouseout: resetHighlight
             });
         }
+
     }).addTo(miniMap);
 
     miniMap.fitBounds(countiesLayer.getBounds());
 });
 
 // --------------------
-// SLIDER CONTROL
+// SLIDER LOGIC
 // --------------------
 
 document.getElementById("yearSlider").oninput = function () {
