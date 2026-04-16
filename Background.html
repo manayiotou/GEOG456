@@ -143,7 +143,7 @@ body {
 var miniMap = L.map('mini-map').setView([40.15, -74.75], 8);
 
 L.tileLayer(
-    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    "https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
     { attribution: "&copy; OpenStreetMap contributors" }
 ).addTo(miniMap);
 
