@@ -85,6 +85,21 @@ body {
     width: 70%;
     border-radius: 10px;
 }
+
+.slider-container {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    background-color: lightblue;
+    border-radius: 10px;
+    border-color: navy;
+    border-width: 5px;
+    border-style: solid;
+}
 </style>
 </head>
 
@@ -128,6 +143,11 @@ body {
     <h2>Study Area</h2>
     <div id="mini-map"></div>
 
+    <div class="slider-container">
+    <input type="range" id="yearSlider" min="0" max="4" step="1" value="0">
+    <p id="yearLabel">Year: 1980</p>
+    </div>
+
     <!-- OPTIONAL FIGURE -->
     <div class="figure">
         <h3>Example Analysis</h3>
@@ -141,12 +161,6 @@ body {
     </a>
 
 </div>
-
-<div class="slider-container">
-    <input type="range" id="yearSlider" min="0" max="4" step="1" value="0">
-    <p id="yearLabel">Year: 1990</p>
-</div>
-
 <script>
 
 // MINI MAP
