@@ -1,90 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Final Map</title>
-    <!-- Leaflet -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css">
-    <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
-    <script src="https://unpkg.com/scrollama"></script>
-    <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
-    <script src="GeeseData.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Final Map</title>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: navy;
-        }
-        #scrolly {
-            display: flex;
-            width: 100%;
-        }
-        #graphic {
-            position: sticky;
-            top: 0;
-            width: 60%;
-            height: 100vh;
-        }
-        #map {
-            width: 100%;
-            height: 100%;
-        }
-        #text {
-            width: 40%;
-            padding: 40px;
-        }
-        .step {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px;
-            border-radius: 20px;
-            font-size: 20px;
-            background: lightblue;
-        }
-        #sliderContainer {
-            position: fixed;
-            top: 20px;
-            left: 54%;
-            transform: translateX(-46%);
-            padding: 10px;
-            text-align: center;
-            font-size: 20px;
-            font-weight: bold;
-            background-color: lightblue;
-            border-radius: 10px;
-            border-color: navy;
-            border-width: 5px;
-            border-style: solid;
-        }
+<!-- Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css">
+<script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+
+<script src="https://unpkg.com/scrollama"></script>
+<script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+
+<script src="GeeseData.js"></script>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: navy;
+}
+
+#scrolly {
+    display: flex;
+    width: 100%;
+}
+
+#graphic {
+    position: sticky;
+    top: 0;
+    width: 60%;
+    height: 100vh;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+}
+
+#text {
+    width: 40%;
+    padding: 40px;
+}
+
+.step {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    border-radius: 20px;
+    font-size: 20px;
+    background: lightblue;
+}
+
+.step div {
+    max-width: 520px;
+}
+
+.step h2 {
+    margin-bottom: 10px;
+}
+
+.step p {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+/* Slider */
+#sliderContainer {
+    position: fixed;
+    top: 20px;
+    left: 54%;
+    transform: translateX(-46%);
+    padding: 10px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    background-color: lightblue;
+    border-radius: 10px;
+    border-color: navy;
+    border-width: 5px;
+    border-style: solid;
+}
 </style>
 </head>
+
 <body>
+
 <div id="scrolly">
 
-    <div id="graphic">
-        <div id="map"></div>
-    </div>
-
-    <div id="text">
-        <div class="step" data-step="step1">State Overview</div>
-        <div class="step" data-step="step2">Newark/City</div>
-        <div class="step" data-step="step3">Trenton</div>
-        <div class="step" data-step="step4">Coast</div>
-        <div class="step" data-step="step5">Inland</div>
-    </div>
-
+<div id="graphic">
+    <div id="map"></div>
 </div>
 
-<!-- Slider (DATA ONLY) -->
+<div id="text">
+
+<!-- STEP 1 -->
+<div class="step" data-step="step1">
+<div>
+<h2>State Overview</h2>
+<p>
+From 2008 to 2023, New Jersey experiences steady expansion of developed land, especially along the I-95 
+corridor and major metropolitan regions. Forest and agricultural lands become increasingly fragmented, while geese 
+populations concentrate near wetlands, reservoirs, and suburban open space.
+</p>
+</div>
+</div>
+
+<!-- STEP 2 -->
+<div class="step" data-step="step2">
+<div>
+<h2>Newark / Urban Core</h2>
+<p>
+Newark remains one of the most intensely developed areas in the state across all years. Land cover 
+shows little structural change, but surrounding suburban expansion increases over time. Canada geese are 
+primarily concentrated in parks, reservoirs, and industrial-adjacent green infrastructure.
+</p>
+</div>
+</div>
+
+<!-- STEP 3 -->
+<div class="step" data-step="step3">
+<div>
+<h2>Trenton Region</h2>
+<p>
+The Trenton area shows moderate but clear suburban growth between 2008 and 2023. Agricultural and 
+semi-natural land is gradually converted into residential and commercial development, creating 
+fragmented edge habitats that increase suitable environments for geese.
+</p>
+</div>
+</div>
+
+<!-- STEP 4 -->
+<div class="step" data-step="step4">
+<div>
+<h2>Coastal New Jersey</h2>
+<p>
+Along the Jersey Shore, development intensifies in tourism-driven towns and barrier island communities.
+ While built environments expand, wetlands and coastal marshes remain important ecological zones that 
+ strongly influence geese distribution patterns.
+</p>
+</div>
+</div>
+
+<!-- STEP 5 -->
+<div class="step" data-step="step5">
+<div>
+<h2>Inland New Jersey</h2>
+<p>
+Inland regions experience the most visible land transformation, with suburban sprawl replacing forests 
+and agricultural land over time. This creates a patchwork landscape of fragmented habitats and open spaces
+ that strongly support adaptable species like Canada geese.
+</p>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- Slider -->
 <div id="sliderContainer">
-    <input type="range" id="yearSlider" min="0" max="3" step="1" value="0">
-    <p id="yearLabel"></p>
+<input type="range" id="yearSlider" min="0" max="3" step="1" value="0">
+<p id="yearLabel"></p>
 </div>
 
 <script>
@@ -100,11 +181,11 @@ var nlcdTiles = {
 };
 
 var scrollViews = {
-    step1: { center: [40.15, -74.75], zoom: 8.5 },
-    step2: { center: [40.735657, -74.172363], zoom: 10 },
-    step3: { center: [40.25, -74.85], zoom: 12 },
-    step4: { center: [40.15, -74.75], zoom: 12 },
-    step5: { center: [40.05, -74.70], zoom: 12 }
+    step1: { center: [40.15, -74.65], zoom: 8 },
+    step2: { center: [40.7357, -74.1723], zoom: 12 },
+    step3: { center: [40.2171, -74.7429], zoom: 12 },
+    step4: { center: [39.95, -74.10], zoom: 11 },
+    step5: { center: [40.10, -74.55], zoom: 11 }
 };
 
 // MAP SETUP
@@ -121,46 +202,39 @@ map.getPane('nlcdPane').style.zIndex = 350;
 var nlcdLayer = null;
 var heatLayer = null;
 
+// UPDATE MAP
+function updateMap(year) {
 
-// Slider Control 
-function  updateMap(year) {
-
-    // update label
     document.getElementById("yearLabel").innerHTML = "Year: " + year;
 
-    // remove old layers
     if (nlcdLayer) map.removeLayer(nlcdLayer);
     if (heatLayer) map.removeLayer(heatLayer);
 
-    // NLCD layer
     nlcdLayer = L.tileLayer(nlcdTiles[year], {
         pane: 'nlcdPane',
         opacity: 0.6
     }).addTo(map);
 
-    // filter data
     var filtered = geeseObservations.features.filter(f =>
         parseInt(f.properties.year) === year
     );
-    // heatmap data
+
     var heatData = filtered.map(f => {
         var c = f.geometry.coordinates;
         var count = Math.log((f.properties.individualCount || 1) + 1);
         return [c[1], c[0], count];
     });
 
-    // heat layer
     heatLayer = L.heatLayer([], {
         radius: 30,
         blur: 20,
         maxZoom: 12
     }).addTo(map);
+
     heatLayer.setLatLngs(heatData);
-
-
 }
 
-// SCROLL CONTROL (CAMERA ONLY)
+// SCROLL CONTROL
 var scroller = scrollama();
 
 scroller.setup({
@@ -187,5 +261,6 @@ document.getElementById("yearSlider").oninput = function () {
 updateMap(2008);
 
 </script>
+
 </body>
 </html>
