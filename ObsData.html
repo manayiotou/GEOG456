@@ -50,11 +50,11 @@
         #sliderContainer {
             position: absolute;
             top: 20px;
-            left: 50%;
+            left: 54%;
             transform: translateX(-46%);
             padding: 10px;
             text-align: center;
-            font-size: 18px;
+            font-size: 20px;
             font-weight: bold;
             background-color: lightblue;
             border-radius: 10px;
@@ -100,7 +100,7 @@ var nlcdTiles = {
 };
 
 var scrollViews = {
-    step1: { center: [40.15, -74.75], zoom: 8 },
+    step1: { center: [40.15, -74.75], zoom: 9 },
     step2: { center: [40.35, -74.60], zoom: 10 },
     step3: { center: [40.25, -74.85], zoom: 12 },
     step4: { center: [40.10, -74.90], zoom: 12 },
@@ -108,7 +108,7 @@ var scrollViews = {
 };
 
 // MAP SETUP
-var map = L.map('map').setView([40.15, -74.75], 8);
+var map = L.map('map').setView([40.15, -74.75], 9);
 
 var base = L.tileLayer(
     "https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
