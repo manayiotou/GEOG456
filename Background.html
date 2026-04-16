@@ -147,53 +147,101 @@ L.tileLayer(
     { attribution: "&copy; OpenStreetMap contributors" }
 ).addTo(miniMap);
 
-// Optional: add a marker or bounding box
-L.marker([40.15, -74.75]).addTo(miniMap)
-    .bindPopup("Study Area: New Jersey");
+var years = [1990, 2000, 2010, 2020];
 
-var counties; // global
+var countiesLayer;
+
+// --------------------
+// COLOR FUNCTION
+// --------------------
+
+function getColor(d) {
+    return d > 2000000 ? '#800026' :
+           d > 1000000 ? '#BD0026' :
+           d > 500000  ? '#E31A1C' :
+           d > 250000  ? '#FC4E2A' :
+           d > 100000  ? '#FD8D3C' :
+           d > 50000   ? '#FEB24C' :
+                         '#FFEDA0';
+}
+
+// --------------------
+// STYLE FUNCTION
+// --------------------
+
+function styleFeature(feature, year) {
+
+    var value = feature.properties["POP" + year];
+
+    return {
+        fillColor: getColor(value),
+        weight: 1,
+        color: "#333",
+        fillOpacity: 0.7
+    };
+}
+
+// --------------------
+// HOVER FUNCTIONS
+// --------------------
+
+function highlightFeature(e) {
+    e.target.setStyle({
+        weight: 2,
+        color: "#000",
+        fillOpacity: 0.9
+    });
+}
+
+function resetHighlight(e) {
+    countiesLayer.resetStyle(e.target);
+}
+
+// --------------------
+// LOAD GEOJSON
+// --------------------
 
 fetch('njCounties.geojson')
   .then(res => res.json())
   .then(data => {
 
-    counties = L.geoJSON(data, {
+    countiesLayer = L.geoJSON(data, {
 
         style: function(feature) {
-            return {
-                color: "#444",
-                weight: 1,
-                fillColor: "#74a9cf",
-                fillOpacity: 0.5
-            };
+            return styleFeature(feature, 1990);
         },
 
         onEachFeature: function(feature, layer) {
 
-            // safe popup (handles different property names)
-            var name = feature.properties.COUNTY || feature.properties.NAME || "County";
+            var name = feature.properties.NAME || "County";
 
             layer.bindPopup(name);
 
             layer.on({
-                mouseover: function(e) {
-                    e.target.setStyle({
-                        weight: 2,
-                        color: "#000",
-                        fillOpacity: 0.7
-                    });
-                },
-
-                mouseout: function(e) {
-                    counties.resetStyle(e.target);
-                }
+                mouseover: highlightFeature,
+                mouseout: resetHighlight
             });
         }
+    }).addTo(map);
 
-    }).addTo(miniMap);
-
-    miniMap.fitBounds(counties.getBounds());
+    map.fitBounds(countiesLayer.getBounds());
 });
+
+// --------------------
+// SLIDER CONTROL
+// --------------------
+
+document.getElementById("yearSlider").oninput = function () {
+
+    var year = years[this.value];
+
+    document.getElementById("yearLabel").innerHTML =
+        "Year: " + year;
+
+    countiesLayer.setStyle(function(feature) {
+        return styleFeature(feature, year);
+    });
+};
 
 </script>
 
