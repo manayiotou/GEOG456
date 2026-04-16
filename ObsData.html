@@ -215,6 +215,8 @@ Suburban sprawl replaces forests and farmland, producing patchy landscapes ideal
 <script>
 // DATA CONFIG
 var years = [2008, 2013, 2018, 2023];
+var currentYear = 2008;
+var currentFiltered = [];
 
 var nlcdTiles = {
     2008: 'https://manayiotou.github.io/GEOG456/2008tiles/{z}/{x}/{y}.png',
@@ -245,6 +247,7 @@ map.getPane('nlcdPane').style.zIndex = 350;
 var nlcdLayer = null;
 var heatLayer = null;
 
+// LEGEND HELPERS
 function formatCountRange(value) {
     return Math.round(value);
 }
@@ -259,13 +262,21 @@ function updateHeatLegendRaw(rawCounts) {
 
     var min = Math.min(...rawCounts);
     var max = Math.max(...rawCounts);
+
+    if (min === max) {
+        document.getElementById("lowRange").textContent = "Low: " + formatCountRange(min);
+        document.getElementById("mediumRange").textContent = "Medium: " + formatCountRange(min);
+        document.getElementById("highRange").textContent = "High: " + formatCountRange(max);
+        return;
+    }
+
     var interval = (max - min) / 3;
 
     var lowMin = min;
     var lowMax = min + interval;
 
     var medMin = lowMax;
-    var medMax = min + interval * 2;
+    var medMax = min + (interval * 2);
 
     var highMin = medMax;
     var highMax = max;
@@ -280,13 +291,37 @@ function updateHeatLegendRaw(rawCounts) {
         "High: " + formatCountRange(highMin) + "–" + formatCountRange(highMax);
 }
 
-// Slider Control
+function updateLegendForVisibleArea() {
+    if (!currentFiltered || currentFiltered.length === 0) {
+        updateHeatLegendRaw([]);
+        return;
+    }
+
+    var bounds = map.getBounds();
+
+    var visibleCounts = currentFiltered
+        .filter(function(f) {
+            var c = f.geometry.coordinates;
+            return bounds.contains([c[1], c[0]]);
+        })
+        .map(function(f) {
+            return Number(f.properties.individualCount) || 1;
+        });
+
+    updateHeatLegendRaw(visibleCounts);
+}
+
+// MAP UPDATE
 function updateMap(year) {
     currentYear = year;
     document.getElementById("yearLabel").innerHTML = "Year: " + year;
 
-    if (nlcdLayer) map.removeLayer(nlcdLayer);
-    if (heatLayer) map.removeLayer(heatLayer);
+    if (nlcdLayer) {
+        map.removeLayer(nlcdLayer);
+    }
+    if (heatLayer) {
+        map.removeLayer(heatLayer);
+    }
 
     // NLCD layer
     nlcdLayer = L.tileLayer(nlcdTiles[year], {
@@ -294,23 +329,19 @@ function updateMap(year) {
         opacity: 0.6
     }).addTo(map);
 
-    // filter data
-    var filtered = geeseObservations.features.filter(f =>
-        parseInt(f.properties.year) === year
-    );
-
+    // Filter observations for selected year
     currentFiltered = geeseObservations.features.filter(function(f) {
         return parseInt(f.properties.year) === year;
     });
 
-    // heatmap data
+    // Heatmap data stays log-scaled for better display
     var heatData = currentFiltered.map(function(f) {
         var c = f.geometry.coordinates;
         var count = Math.log((Number(f.properties.individualCount) || 1) + 1);
         return [c[1], c[0], count];
     });
 
-    // heat layer
+    // Original heatmap gradient
     heatLayer = L.heatLayer(heatData, {
         radius: 30,
         blur: 20,
@@ -321,6 +352,8 @@ function updateMap(year) {
             1.0: 'red'
         }
     }).addTo(map);
+
+    // Update legend after drawing
     updateLegendForVisibleArea();
 }
 
@@ -339,19 +372,22 @@ scroller.setup({
     });
 });
 
-window.addEventListener('resize', scroller.resize);
+window.addEventListener('resize', function() {
+    scroller.resize();
+});
 
+// Update legend whenever map extent changes
 map.on('zoomend moveend', function() {
     updateLegendForVisibleArea();
 });
 
-
 // SLIDER CONTROL
-document.getElementById("yearSlider").oninput = function () {
+document.getElementById("yearSlider").addEventListener("input", function() {
     var year = years[this.value];
     updateMap(year);
-};
+});
 
+// INITIAL LOAD
 updateMap(2008);
 </script>
 
