@@ -33,6 +33,7 @@ body {
     top: 0;
     width: 60%;
     height: 100vh;
+    position: sticky;
 }
 
 #map {
@@ -85,12 +86,9 @@ body {
     z-index: 999;
 }
 
-/* =======================
-   LEGENDS (BOTTOM LEFT)
-======================= */
+/* LEGENDS */
 .legend {
     position: absolute;
-    bottom: 20px;
     left: 20px;
     background: white;
     padding: 10px 12px;
@@ -99,28 +97,33 @@ body {
     line-height: 1.4;
     box-shadow: 0 0 8px rgba(0,0,0,0.25);
     z-index: 999;
+    min-width: 180px;
 }
 
 .legend h4 {
     margin: 0 0 6px 0;
 }
 
-/* stack second legend slightly above */
-#heatLegend {
-    bottom: 120px;
+#nlcdLegend {
+    bottom: 20px;
 }
 
-.legend div {
+#heatLegend {
+    bottom: 125px;
+}
+
+.legend-row {
     display: flex;
     align-items: center;
     margin-bottom: 4px;
 }
 
-.legend span {
+.legend-color {
     width: 14px;
     height: 14px;
     margin-right: 8px;
     display: inline-block;
+    flex-shrink: 0;
 }
 </style>
 </head>
@@ -135,18 +138,18 @@ body {
     <!-- NLCD LEGEND -->
     <div class="legend" id="nlcdLegend">
         <h4>NLCD Land Cover</h4>
-        <div><span style="background:#e31a1c;"></span> Developed</div>
-        <div><span style="background:#33a02c;"></span> Forest</div>
-        <div><span style="background:#1f78b4;"></span> Water</div>
-        <div><span style="background:#ffcc00;"></span> Agriculture</div>
+        <div class="legend-row"><span class="legend-color" style="background:#e31a1c;"></span><span>Developed</span></div>
+        <div class="legend-row"><span class="legend-color" style="background:#33a02c;"></span><span>Forest</span></div>
+        <div class="legend-row"><span class="legend-color" style="background:#1f78b4;"></span><span>Water</span></div>
+        <div class="legend-row"><span class="legend-color" style="background:#ffcc00;"></span><span>Agriculture</span></div>
     </div>
 
     <!-- HEATMAP LEGEND -->
     <div class="legend" id="heatLegend">
         <h4>Geese Density</h4>
-        <div><span style="background:blue;"></span> Low</div>
-        <div><span style="background:lime;"></span> Medium</div>
-        <div><span style="background:red;"></span> High</div>
+        <div class="legend-row"><span class="legend-color" style="background:blue;"></span><span id="lowRange">Low: --</span></div>
+        <div class="legend-row"><span class="legend-color" style="background:lime;"></span><span id="mediumRange">Medium: --</span></div>
+        <div class="legend-row"><span class="legend-color" style="background:red;"></span><span id="highRange">High: --</span></div>
     </div>
 
 </div>
@@ -208,7 +211,6 @@ Suburban sprawl replaces forests and farmland, producing patchy landscapes ideal
 </div>
 
 <script>
-
 // DATA CONFIG
 var years = [2008, 2013, 2018, 2023];
 
@@ -260,10 +262,10 @@ function updateHeatLegendRaw(rawCounts) {
     var lowMin = min;
     var lowMax = min + interval;
 
-    var medMin = lowMax + 1;
+    var medMin = lowMax;
     var medMax = min + interval * 2;
 
-    var highMin = medMax + 1;
+    var highMin = medMax;
     var highMax = max;
 
     document.getElementById("lowRange").textContent =
@@ -296,24 +298,22 @@ function updateMap(year) {
     );
 
     // raw counts for legend
-    var rawCounts = filtered.map(f => f.properties.individualCount || 1);
+    var rawCounts = filtered.map(f => Number(f.properties.individualCount) || 1);
     updateHeatLegendRaw(rawCounts);
 
     // heatmap data
     var heatData = filtered.map(f => {
         var c = f.geometry.coordinates;
-        var count = Math.log((f.properties.individualCount || 1) + 1);
+        var count = Math.log((Number(f.properties.individualCount) || 1) + 1);
         return [c[1], c[0], count];
     });
 
     // heat layer
-    heatLayer = L.heatLayer([], {
+    heatLayer = L.heatLayer(heatData, {
         radius: 30,
         blur: 20,
         maxZoom: 12
     }).addTo(map);
-
-    heatLayer.setLatLngs(heatData);
 }
 
 // SCROLL CONTROL
@@ -340,7 +340,6 @@ document.getElementById("yearSlider").oninput = function () {
 };
 
 updateMap(2008);
-
 </script>
 
 </body>
