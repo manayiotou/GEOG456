@@ -86,30 +86,31 @@ body {
     z-index: 999;
 }
 
-/* LEGENDS */
-.legend {
+/* container controls position */
+#legendContainer {
     position: absolute;
+    bottom: 20px;
     left: 20px;
+    z-index: 999;
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* spacing between legends */
+}
+
+/* individual legend boxes */
+.legend {
     background: white;
     padding: 10px 12px;
     border-radius: 8px;
     font-size: 13px;
     line-height: 1.4;
     box-shadow: 0 0 8px rgba(0,0,0,0.25);
-    z-index: 999;
     min-width: 180px;
 }
 
 .legend h4 {
     margin: 0 0 6px 0;
-}
-
-#nlcdLegend {
-    bottom: 20px;
-}
-
-#heatLegend {
-    bottom: 125px;
 }
 
 .legend-row {
@@ -135,23 +136,24 @@ body {
 <div id="graphic">
     <div id="map"></div>
 
-    <!-- NLCD LEGEND -->
-    <div class="legend" id="nlcdLegend">
-        <h4>NLCD Land Cover</h4>
-        <div class="legend-row"><span class="legend-color" style="background:#e31a1c;"></span><span>Developed</span></div>
-        <div class="legend-row"><span class="legend-color" style="background:#33a02c;"></span><span>Forest</span></div>
-        <div class="legend-row"><span class="legend-color" style="background:#1f78b4;"></span><span>Water</span></div>
-        <div class="legend-row"><span class="legend-color" style="background:#ffcc00;"></span><span>Agriculture</span></div>
-    </div>
+    <div id="legendContainer">
 
-    <!-- HEATMAP LEGEND -->
-    <div class="legend" id="heatLegend">
-        <h4>Geese Density</h4>
-        <div class="legend-row"><span class="legend-color" style="background:blue;"></span><span id="lowRange">Low: --</span></div>
-        <div class="legend-row"><span class="legend-color" style="background:lime;"></span><span id="mediumRange">Medium: --</span></div>
-        <div class="legend-row"><span class="legend-color" style="background:red;"></span><span id="highRange">High: --</span></div>
-    </div>
+        <div class="legend" id="heatLegend">
+            <h4>Geese Density</h4>
+            <div class="legend-row"><span class="legend-color" style="background:blue;"></span><span id="lowRange">Low: --</span></div>
+            <div class="legend-row"><span class="legend-color" style="background:lime;"></span><span id="mediumRange">Medium: --</span></div>
+            <div class="legend-row"><span class="legend-color" style="background:red;"></span><span id="highRange">High: --</span></div>
+        </div>
 
+        <div class="legend" id="nlcdLegend">
+            <h4>NLCD Land Cover</h4>
+            <div class="legend-row"><span class="legend-color" style="background:#e31a1c;"></span><span>Developed</span></div>
+            <div class="legend-row"><span class="legend-color" style="background:#33a02c;"></span><span>Forest</span></div>
+            <div class="legend-row"><span class="legend-color" style="background:#1f78b4;"></span><span>Water</span></div>
+            <div class="legend-row"><span class="legend-color" style="background:#ffcc00;"></span><span>Agriculture</span></div>
+        </div>
+
+    </div>
 </div>
 
 <div id="text">
