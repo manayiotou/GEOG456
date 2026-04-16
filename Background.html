@@ -151,53 +151,49 @@ L.tileLayer(
 L.marker([40.15, -74.75]).addTo(miniMap)
     .bindPopup("Study Area: New Jersey");
 
-var counties;
+var counties; // global
 
 fetch('njCounties.geojson')
   .then(res => res.json())
   .then(data => {
-    L.geoJSON(data).addTo(miniMap);
-  });
 
-fetch('njCounties.geojson')
-  .then(response => response.json())
-  .then(data => {
+    counties = L.geoJSON(data, {
 
-    var counties = L.geoJSON(data, {
-        style: {
-            color: "#555",
-            weight: 1,
-            fillColor: "#9ecae1",
-            fillOpacity: 0.5
+        style: function(feature) {
+            return {
+                color: "#444",
+                weight: 1,
+                fillColor: "#74a9cf",
+                fillOpacity: 0.5
+            };
         },
 
         onEachFeature: function(feature, layer) {
-            layer.bindPopup(feature.properties.COUNTY || feature.properties.NAME);
+
+            // safe popup (handles different property names)
+            var name = feature.properties.COUNTY || feature.properties.NAME || "County";
+
+            layer.bindPopup(name);
 
             layer.on({
-                mouseover: highlightFeature,
-                mouseout: resetHighlight
+                mouseover: function(e) {
+                    e.target.setStyle({
+                        weight: 2,
+                        color: "#000",
+                        fillOpacity: 0.7
+                    });
+                },
+
+                mouseout: function(e) {
+                    counties.resetStyle(e.target);
+                }
             });
         }
-    });
 
-    counties.addTo(miniMap);
+    }).addTo(miniMap);
 
-    // Fit map to NJ bounds
     miniMap.fitBounds(counties.getBounds());
-
 });
-function highlightFeature(e) {
-    e.target.setStyle({
-        weight: 2,
-        color: '#000',
-        fillOpacity: 0.7
-    });
-}
-
-function resetHighlight(e) {
-    counties.resetStyle(e.target);
-}
 
 </script>
 
