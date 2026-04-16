@@ -218,7 +218,7 @@ fetch('njCounties.geojson')
         onEachFeature: function(feature, layer) {
 
             layer.bindPopup(
-                feature.properties.NAME || "null"
+                feature.properties.POPDEN + year || "null"
             );
 
             layer.on({
