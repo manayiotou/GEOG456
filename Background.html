@@ -152,7 +152,7 @@ L.tileLayer(
     { attribution: "&copy; OpenStreetMap contributors" }
 ).addTo(miniMap);
 
-var years = [1990, 2000, 2010, 2020];
+var years = [1980, 1990, 2000, 2010, 2020];
 var countiesLayer;
 
 // --------------------
@@ -160,12 +160,12 @@ var countiesLayer;
 // --------------------
 
 function getColor(d) {
-    return d > 600 ? '#800026' :
-           d > 500 ? '#BD0026' :
-           d > 400  ? '#E31A1C' :
-           d > 300  ? '#FC4E2A' :
-           d > 200  ? '#FD8D3C' :
-           d > 100   ? '#FEB24C' :
+    return d > 650 ? '#800026' :
+           d > 550 ? '#BD0026' :
+           d > 450  ? '#E31A1C' :
+           d > 350  ? '#FC4E2A' :
+           d > 250  ? '#FD8D3C' :
+           d > 150   ? '#FEB24C' :
                          '#FFEDA0';
 }
 
@@ -212,14 +212,14 @@ fetch('njCounties.geojson')
     countiesLayer = L.geoJSON(data, {
 
         style: function(feature) {
-            return styleFeature(feature, 1990);
+            return styleFeature(feature, 1980);
         },
 
         onEachFeature: function(feature, layer) {
 
             layer.bindPopup(
                 "County: " + feature.properties.COUNTY || "null",
-                "Total Population: " + feature.properties["POPDEN" + year]
+                "Population Density: " + feature.properties["POPDEN" + year]
             );
 
             layer.on({
