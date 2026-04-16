@@ -160,12 +160,12 @@ var countiesLayer;
 // --------------------
 
 function getColor(d) {
-    return d > 2000000 ? '#800026' :
-           d > 1000000 ? '#BD0026' :
-           d > 500000  ? '#E31A1C' :
-           d > 250000  ? '#FC4E2A' :
-           d > 100000  ? '#FD8D3C' :
-           d > 50000   ? '#FEB24C' :
+    return d > 500 ? '#800026' :
+           d > 400 ? '#BD0026' :
+           d > 300  ? '#E31A1C' :
+           d > 200  ? '#FC4E2A' :
+           d > 100  ? '#FD8D3C' :
+           d > 0   ? '#FEB24C' :
                          '#FFEDA0';
 }
 
@@ -175,7 +175,7 @@ function getColor(d) {
 
 function styleFeature(feature, year) {
 
-    var value = feature.properties["POP" + year];
+    var value = feature.properties["POPDEN" + year];
 
     return {
         fillColor: getColor(value),
