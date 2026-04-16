@@ -152,6 +152,8 @@ L.tileLayer(
 L.marker([40.15, -74.75]).addTo(miniMap)
     .bindPopup("Study Area: New Jersey");
 
+var counties;
+
 fetch('njCounties.geojson')
   .then(response => response.json())
   .then(data => {
@@ -165,7 +167,7 @@ fetch('njCounties.geojson')
         },
 
         onEachFeature: function(feature, layer) {
-            layer.bindPopup(features.properties.COUNTY);
+            layer.bindPopup(feature.properties.COUNTY);
 
             layer.on({
                 mouseover: highlightFeature,
