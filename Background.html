@@ -151,6 +151,32 @@ L.tileLayer(
 L.marker([40.15, -74.75]).addTo(miniMap)
     .bindPopup("Study Area: New Jersey");
 
+fetch('njCounties.geojson')
+  .then(response => response.json())
+  .then(data => {
+
+    var counties = L.geoJSON(data, {
+        style: function(feature) {
+            return {
+                color: "#333",
+                weight: 1,
+                fillColor: "#74a9cf",
+                fillOpacity: 0.4
+            };
+        },
+
+        onEachFeature: function(feature, layer) {
+            layer.bindPopup(feature.properties.NAME || "County");
+        }
+    });
+
+    counties.addTo(miniMap);
+
+    // Fit map to NJ bounds
+    miniMap.fitBounds(counties.getBounds());
+
+});
+
 </script>
 
 </body>
