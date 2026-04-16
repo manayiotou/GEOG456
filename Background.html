@@ -161,7 +161,7 @@ var countiesLayer;
 // --------------------
 
 function getColor(d) {
-    return d > 2000 ? '#800026' :
+    return d > 2200 ? '#800026' :
            d > 1500 ? '#BD0026' :
            d > 1100  ? '#E31A1C' :
            d > 900  ? '#FC4E2A' :
@@ -221,10 +221,12 @@ fetch('njCounties.geojson')
             layer.bindPopup(function () {
 
                 var name = feature.properties.COUNTY || "Unknown";
+                var year = selectedYear;
                 var dens = feature.properties["POPDEN" + selectedYear];
 
                 return `
                     <b>County:</b> ${name}<br>
+                    <b>Year:</b> ${year}<br>
                     <b>Density:</b> ${dens}
                 `;
             });
