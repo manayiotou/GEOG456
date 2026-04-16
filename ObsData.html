@@ -209,6 +209,7 @@ Suburban sprawl replaces forests and farmland, producing patchy landscapes ideal
 
 <script>
 
+// DATA CONFIG
 var years = [2008, 2013, 2018, 2023];
 
 var nlcdTiles = {
@@ -226,10 +227,12 @@ var scrollViews = {
     step5: { center: [40.10, -74.55], zoom: 11 }
 };
 
+// MAP SETUP
 var map = L.map('map').setView([40.15, -74.75], 8.5);
 
-L.tileLayer(
-    "https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"
+var base = L.tileLayer(
+    "https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
+    { maxZoom: 15 }
 ).addTo(map);
 
 map.createPane('nlcdPane');
@@ -238,6 +241,42 @@ map.getPane('nlcdPane').style.zIndex = 350;
 var nlcdLayer = null;
 var heatLayer = null;
 
+function formatCountRange(value) {
+    return Math.round(value);
+}
+
+function updateHeatLegendRaw(rawCounts) {
+    if (!rawCounts || rawCounts.length === 0) {
+        document.getElementById("lowRange").textContent = "Low: no data";
+        document.getElementById("mediumRange").textContent = "Medium: no data";
+        document.getElementById("highRange").textContent = "High: no data";
+        return;
+    }
+
+    var min = Math.min(...rawCounts);
+    var max = Math.max(...rawCounts);
+    var interval = (max - min) / 3;
+
+    var lowMin = min;
+    var lowMax = min + interval;
+
+    var medMin = lowMax + 1;
+    var medMax = min + interval * 2;
+
+    var highMin = medMax + 1;
+    var highMax = max;
+
+    document.getElementById("lowRange").textContent =
+        "Low: " + formatCountRange(lowMin) + "–" + formatCountRange(lowMax);
+
+    document.getElementById("mediumRange").textContent =
+        "Medium: " + formatCountRange(medMin) + "–" + formatCountRange(medMax);
+
+    document.getElementById("highRange").textContent =
+        "High: " + formatCountRange(highMin) + "–" + formatCountRange(highMax);
+}
+
+// Slider Control
 function updateMap(year) {
 
     document.getElementById("yearLabel").innerHTML = "Year: " + year;
@@ -245,28 +284,39 @@ function updateMap(year) {
     if (nlcdLayer) map.removeLayer(nlcdLayer);
     if (heatLayer) map.removeLayer(heatLayer);
 
+    // NLCD layer
     nlcdLayer = L.tileLayer(nlcdTiles[year], {
         pane: 'nlcdPane',
         opacity: 0.6
     }).addTo(map);
 
+    // filter data
     var filtered = geeseObservations.features.filter(f =>
         parseInt(f.properties.year) === year
     );
 
+    // raw counts for legend
+    var rawCounts = filtered.map(f => f.properties.individualCount || 1);
+    updateHeatLegendRaw(rawCounts);
+
+    // heatmap data
     var heatData = filtered.map(f => {
         var c = f.geometry.coordinates;
         var count = Math.log((f.properties.individualCount || 1) + 1);
         return [c[1], c[0], count];
     });
 
-    heatLayer = L.heatLayer(heatData, {
+    // heat layer
+    heatLayer = L.heatLayer([], {
         radius: 30,
         blur: 20,
         maxZoom: 12
     }).addTo(map);
+
+    heatLayer.setLatLngs(heatData);
 }
 
+// SCROLL CONTROL
 var scroller = scrollama();
 
 scroller.setup({
@@ -275,13 +325,18 @@ scroller.setup({
 }).onStepEnter(function(response) {
     var step = response.element.dataset.step;
     var view = scrollViews[step];
-    map.flyTo(view.center, view.zoom, { duration: 1.5 });
+
+    map.flyTo(view.center, view.zoom, {
+        duration: 1.5
+    });
 });
 
 window.addEventListener('resize', scroller.resize);
 
+// SLIDER CONTROL
 document.getElementById("yearSlider").oninput = function () {
-    updateMap(years[this.value]);
+    var year = years[this.value];
+    updateMap(year);
 };
 
 updateMap(2008);
