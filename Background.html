@@ -218,7 +218,8 @@ fetch('njCounties.geojson')
         onEachFeature: function(feature, layer) {
 
             layer.bindPopup(
-                feature.properties.COUNTY || "null"
+                "County: " + feature.properties.COUNTY || "null",
+                "Total Population: " + feature.properties["POPDEN" + year]
             );
 
             layer.on({
