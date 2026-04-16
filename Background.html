@@ -154,6 +154,12 @@ L.marker([40.15, -74.75]).addTo(miniMap)
 var counties;
 
 fetch('njCounties.geojson')
+  .then(res => res.json())
+  .then(data => {
+    L.geoJSON(data).addTo(miniMap);
+  });
+
+fetch('njCounties.geojson')
   .then(response => response.json())
   .then(data => {
 
