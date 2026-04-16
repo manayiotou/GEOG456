@@ -153,6 +153,7 @@ L.tileLayer(
 ).addTo(miniMap);
 
 var years = [1980, 1990, 2000, 2010, 2020];
+var selectedYear = 1990;
 var countiesLayer;
 
 // --------------------
@@ -216,10 +217,10 @@ fetch('njCounties.geojson')
         },
 
         onEachFeature: function(feature, layer) {
-
+            selectedYear = year;
             layer.bindPopup(
                 "County: " + feature.properties.COUNTY || "null",
-                "Population Density: " + feature.properties["POPDEN" + year]
+                "Population Density: " + feature.properties["POPDEN" + selectedYear]
             );
 
             layer.on({
