@@ -33,7 +33,6 @@ body {
     top: 0;
     width: 60%;
     height: 100vh;
-    position: sticky;
 }
 
 #map {
@@ -86,19 +85,17 @@ body {
     z-index: 999;
 }
 
-/* container controls position */
+/* LEGEND CONTAINER */
 #legendContainer {
     position: absolute;
     bottom: 20px;
     left: 20px;
     z-index: 999;
-
     display: flex;
     flex-direction: column;
-    gap: 12px; /* spacing between legends */
+    gap: 12px;
 }
 
-/* individual legend boxes */
 .legend {
     background: white;
     padding: 10px 12px;
@@ -106,7 +103,7 @@ body {
     font-size: 13px;
     line-height: 1.4;
     box-shadow: 0 0 8px rgba(0,0,0,0.25);
-    min-width: 180px;
+    min-width: 190px;
 }
 
 .legend h4 {
@@ -140,9 +137,18 @@ body {
 
         <div class="legend" id="heatLegend">
             <h4>Geese Density</h4>
-            <div class="legend-row"><span class="legend-color" style="background:blue;"></span><span id="lowRange">Low: --</span></div>
-            <div class="legend-row"><span class="legend-color" style="background:lime;"></span><span id="mediumRange">Medium: --</span></div>
-            <div class="legend-row"><span class="legend-color" style="background:red;"></span><span id="highRange">High: --</span></div>
+            <div class="legend-row">
+                <span class="legend-color" style="background:#E6D6FF;"></span>
+                <span id="lowRange">Low: --</span>
+            </div>
+            <div class="legend-row">
+                <span class="legend-color" style="background:#9B59B6;"></span>
+                <span id="mediumRange">Medium: --</span>
+            </div>
+            <div class="legend-row">
+                <span class="legend-color" style="background:#3D0C5C;"></span>
+                <span id="highRange">High: --</span>
+            </div>
         </div>
 
         <div class="legend" id="nlcdLegend">
@@ -303,18 +309,24 @@ function updateMap(year) {
     var rawCounts = filtered.map(f => Number(f.properties.individualCount) || 1);
     updateHeatLegendRaw(rawCounts);
 
-    // heatmap data
+    // heatmap data stays log-scaled so the map renders better
     var heatData = filtered.map(f => {
         var c = f.geometry.coordinates;
         var count = Math.log((Number(f.properties.individualCount) || 1) + 1);
         return [c[1], c[0], count];
     });
 
-    // heat layer
+    // heat layer with purple gradient
     heatLayer = L.heatLayer(heatData, {
         radius: 30,
         blur: 20,
-        maxZoom: 12
+        maxZoom: 12,
+        gradient: {
+            0.2: '#E6D6FF',
+            0.5: '#9B59B6',
+            0.8: '#5B2C6F',
+            1.0: '#3D0C5C'
+        }
     }).addTo(map);
 }
 
