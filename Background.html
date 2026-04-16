@@ -222,9 +222,9 @@ fetch('njCounties.geojson')
                 mouseout: resetHighlight
             });
         }
-    }).addTo(map);
+    }).addTo(miniMap);
 
-    map.fitBounds(countiesLayer.getBounds());
+    miniMap.fitBounds(countiesLayer.getBounds());
 });
 
 // --------------------
