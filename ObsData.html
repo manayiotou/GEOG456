@@ -329,7 +329,7 @@ function updateMap(year) {
     }
 
     // NLCD layer
-    nlcdLayer = L.tileLayer(nlcdTiles[year], {
+    nlcdLayer = L.tileLayer(nlcdTiles[year] + '?v=' + year + '-' + Date.now(), {
         pane: 'nlcdPane',
         opacity: 0.6
     }).addTo(map);
