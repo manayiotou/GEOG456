@@ -220,12 +220,10 @@ body {
 <body>
 
 <div id="scrolly">
-
     <div id="graphic">
         <div id="map"></div>
 
         <div id="legendContainer">
-
             <div class="legend" id="heatLegend">
                 <h4>Geese Density</h4>
                 <div class="legend-row"><span class="legend-color" style="background:blue;"></span><span id="lowRange">Low: --</span></div>
@@ -242,18 +240,16 @@ body {
                 <div class="legend-row"><span class="legend-color" style="background:#f4a463;"></span><span>Developed: Bare Land</span></div>
                 <div class="legend-row"><span class="legend-color" style="background:#e37d73;"></span><span>Developed: Light Intensity</span></div>
                 <div class="legend-row"><span class="legend-color" style="background:#d4556b;"></span><span>Developed: Medium Intensity</span></div>
-                <div class="legend-row  "><span class="legend-color" style="background:#b3006b;"></span><span>Developed: High Intensity</span></div>
+                <div class="legend-row"><span class="legend-color" style="background:#b3006b;"></span><span>Developed: High Intensity</span></div>
                 <div class="toggle-row">
                     <input type="checkbox" id="toggleNLCD" checked>
                     <label for="toggleNLCD">Show developed land</label>
                 </div>
             </div>
-
         </div>
     </div>
 
     <div id="text">
-
         <div class="step" data-step="step1">
             <div>
                 <h2>State Overview</h2>
@@ -318,11 +314,9 @@ body {
                 <p class="step-note">Key idea: development may not reduce goose habitat as much as it reshapes it in their favor.</p>
             </div>
         </div>
-
     </div>
 </div>
 
-<!-- SLIDER -->
 <div id="sliderContainer">
     <div id="sliderTitle">Observation Year</div>
     <input type="range" id="yearSlider" min="0" max="3" step="1" value="0">
@@ -336,7 +330,9 @@ body {
 </div>
 
 <script>
+// ---------------------------
 // DATA CONFIG
+// ---------------------------
 var years = [2008, 2013, 2018, 2023];
 var currentYear = 2008;
 var currentFiltered = [];
@@ -356,23 +352,62 @@ var scrollViews = {
     step5: { center: [40.10, -74.55], zoom: 11 }
 };
 
+// ---------------------------
 // MAP SETUP
+// ---------------------------
 var map = L.map('map').setView([40.15, -74.65], 8);
 
 var base = L.tileLayer(
-"http://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}"    { maxZoom: 15 }
+    "https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+    { maxZoom: 15 }
 ).addTo(map);
 
 map.createPane('nlcdPane');
 map.getPane('nlcdPane').style.zIndex = 350;
 
+// Current visible layers
 var nlcdLayer = null;
 var heatLayer = null;
 
 var nlcdVisible = true;
 var heatVisible = true;
 
+// Preload NLCD tile layers once
+var nlcdLayers = {};
+years.forEach(function(year) {
+    nlcdLayers[year] = L.tileLayer(nlcdTiles[year], {
+        pane: 'nlcdPane',
+        opacity: 1
+    });
+});
+
+// Precompute observations by year once
+var observationsByYear = {};
+years.forEach(function(year) {
+    observationsByYear[year] = geeseObservations.features.filter(function(f) {
+        return parseInt(f.properties.year) === year;
+    });
+});
+
+// Create heat layer once
+heatLayer = L.heatLayer([], {
+    radius: 20,
+    blur: 15,
+    maxZoom: 12,
+    gradient: {
+        0.3: 'blue',
+        0.6: 'yellow',
+        1.0: 'red'
+    }
+});
+
+if (heatVisible) {
+    heatLayer.addTo(map);
+}
+
+// ---------------------------
 // LEGEND HELPERS
+// ---------------------------
 function formatCountRange(value) {
     return Math.round(value);
 }
@@ -436,33 +471,26 @@ function updateLegendForVisibleArea() {
     updateHeatLegendRaw(visibleCounts);
 }
 
+// ---------------------------
 // MAP UPDATE
+// ---------------------------
 function updateMap(year) {
     currentYear = year;
-    document.getElementById("yearLabel").innerHTML = "Year: " + year;
+    document.getElementById("yearLabel").textContent = "Year: " + year;
 
+    // Switch NLCD layer without rebuilding it
     if (nlcdLayer) {
         map.removeLayer(nlcdLayer);
-        nlcdLayer = null;
     }
 
-    if (heatLayer) {
-        map.removeLayer(heatLayer);
-        heatLayer = null;
-    }
-
-    nlcdLayer = L.tileLayer(nlcdTiles[year] + '?v=' + year + '-' + Date.now(), {
-        pane: 'nlcdPane',
-        opacity: 1
-    });
+    nlcdLayer = nlcdLayers[year];
 
     if (nlcdVisible) {
         nlcdLayer.addTo(map);
     }
 
-    currentFiltered = geeseObservations.features.filter(function(f) {
-        return parseInt(f.properties.year) === year;
-    });
+    // Pull already grouped year data
+    currentFiltered = observationsByYear[year];
 
     var heatData = currentFiltered.map(function(f) {
         var c = f.geometry.coordinates;
@@ -470,27 +498,17 @@ function updateMap(year) {
         return [c[1], c[0], count];
     });
 
-    heatLayer = L.heatLayer(heatData, {
-        radius: 30,
-        blur: 20,
-        maxZoom: 12,
-        gradient: {
-            0.3: 'blue',
-            0.6: 'yellow',
-            1.0: 'red'
-        }
-    });
-
-    if (heatVisible) {
-        heatLayer.addTo(map);
-    }
+    // Update existing heat layer instead of rebuilding it
+    heatLayer.setLatLngs(heatData);
 
     updateLegendForVisibleArea();
 
-    console.log("Loading NLCD year:", year, nlcdTiles[year]);
+    console.log("Showing NLCD year:", year);
 }
 
+// ---------------------------
 // SCROLL CONTROL
+// ---------------------------
 var scroller = scrollama();
 
 scroller.setup({
@@ -514,22 +532,39 @@ map.on('zoomend moveend', function() {
     updateLegendForVisibleArea();
 });
 
+// ---------------------------
 // SLIDER CONTROL
-document.getElementById("yearSlider").addEventListener("input", function() {
+// ---------------------------
+var slider = document.getElementById("yearSlider");
+var sliderTimeout = null;
+
+slider.addEventListener("input", function() {
     var year = years[this.value];
+    document.getElementById("yearLabel").textContent = "Year: " + year;
+
+    clearTimeout(sliderTimeout);
+    sliderTimeout = setTimeout(function() {
+        updateMap(year);
+    }, 120);
+});
+
+// Also update immediately when user releases slider
+slider.addEventListener("change", function() {
+    var year = years[this.value];
+    clearTimeout(sliderTimeout);
     updateMap(year);
 });
 
+// ---------------------------
 // TOGGLES
+// ---------------------------
 document.getElementById("toggleHeat").addEventListener("change", function() {
     heatVisible = this.checked;
 
-    if (heatLayer) {
-        if (heatVisible) {
-            heatLayer.addTo(map);
-        } else {
-            map.removeLayer(heatLayer);
-        }
+    if (heatVisible) {
+        heatLayer.addTo(map);
+    } else {
+        map.removeLayer(heatLayer);
     }
 });
 
@@ -545,7 +580,9 @@ document.getElementById("toggleNLCD").addEventListener("change", function() {
     }
 });
 
+// ---------------------------
 // INITIAL LOAD
+// ---------------------------
 updateMap(2008);
 </script>
 
