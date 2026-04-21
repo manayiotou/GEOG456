@@ -1,245 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Final Map</title>
-
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css">
-<script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
-
-<script src="https://unpkg.com/scrollama"></script>
-<script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
-
-<script src="GeeseData.js"></script>
-
-<style>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background-image: url('https://www.shutterstock.com/image-photo/new-york-city-skyline-large-260nw-2456657079.jpg');
-    background-size: cover;
-}
-
-#scrolly {
-    display: flex;
-    width: 100%;
-}
-
-#graphic {
-    position: sticky;
-    top: 0;
-    width: 75%;
-}
-
-#map {
-    width: 100%;
-    height: 100%;
-}
-
-#text {
-    width: 25%;
-    padding: 40px;
-    background-image: url('https://images.stockcake.com/public/e/d/d/edd6f495-b4ee-4306-9b2c-5e1293762526_large/geese-sunset-flight-stockcake.jpg');
-    background-size: cover;
-}
-
-.step {
-    height: 60vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px;
-    font-size: 20px;
-    background: lightblue;
-}
-
-.step div {
-    max-width: 520px;
-}
-
-.step h2 {
-    margin-bottom: 50px;
-}
-
-.step p {
-    font-size: 16px;
-    line-height: 1.5;
-}
-
-/* YEAR TOGGLE */
-#yearToggleContainer {
-    position: fixed;
-    top: 20px;
-    left: 45%;
-    transform: translateX(-55%);
-    background: rgba(245, 245, 245, 0.95);
-    border: 2px solid navy;
-    border-radius: 12px;
-    padding: 10px 14px;
-    z-index: 999;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
-
-#yearToggleLabel {
-    text-align: center;
-    font-size: 16px;
-    font-weight: bold;
-    color: navy;
-    margin-bottom: 8px;
-}
-
-#yearButtons {
-    display: flex;
-    gap: 8px;
-}
-
-.year-btn {
-    border: 1px solid navy;
-    background: white;
-    color: navy;
-    border-radius: 8px;
-    padding: 8px 14px;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.year-btn:hover {
-    background: #dce8f7;
-}
-
-.year-btn.active {
-    background: navy;
-    color: white;
-}
-
-/* LEGEND */
-#legendContainer {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    z-index: 999;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.legend {
-    background: white;
-    padding: 10px 12px;
-    border-radius: 8px;
-    font-size: 13px;
-    line-height: 1.4;
-    box-shadow: 0 0 8px rgba(0,0,0,0.25);
-    min-width: 180px;
-}
-
-.legend h4 {
-    margin: 0 0 6px 0;
-}
-
-.legend-row {
-    display: flex;
-    align-items: center;
-    margin-bottom: 4px;
-}
-
-.legend-color {
-    width: 14px;
-    height: 14px;
-    margin-right: 8px;
-    display: inline-block;
-    flex-shrink: 0;
-}
-</style>
-</head>
-
-<body>
-
-<div id="scrolly">
-
-    <div id="graphic">
-        <div id="map"></div>
-
-        <div id="legendContainer">
-            <div class="legend" id="heatLegend">
-                <h4>Geese Density</h4>
-                <div class="legend-row"><span class="legend-color" style="background:#afd4ed;"></span><span id="lowRange">Low: --</span></div>
-                <div class="legend-row"><span class="legend-color" style="background:#6fa4d9;"></span><span id="mediumRange">Medium: --</span></div>
-                <div class="legend-row"><span class="legend-color" style="background:#8856a7;"></span><span id="highRange">High: --</span></div>
-            </div>
-
-            <div class="legend" id="nlcdLegend">
-                <h4>NLCD Land Cover</h4>
-                <div class="legend-row"><span class="legend-color" style="background:#ec848b;"></span><span>Developed</span></div>
-            </div>
-        </div>
-    </div>
-
-    <div id="text">
-        <div class="step" data-step="step1">
-            <div>
-                <h2>State Overview</h2>
-                <p>
-                    From 2008–2023, New Jersey shows steady urban expansion along major corridors. Land becomes more fragmented, increasing edge habitat used by geese.
-                </p>
-            </div>
-        </div>
-
-        <div class="step" data-step="step2">
-            <div>
-                <h2>Newark</h2>
-                <p>
-                    Highly urbanized across all years with minimal land cover change. Geese concentrate in parks and water infrastructure.
-                </p>
-            </div>
-        </div>
-
-        <div class="step" data-step="step3">
-            <div>
-                <h2>Trenton</h2>
-                <p>
-                    Moderate suburban growth replaces agricultural land, increasing fragmented habitat.
-                </p>
-            </div>
-        </div>
-
-        <div class="step" data-step="step4">
-            <div>
-                <h2>Coast</h2>
-                <p>
-                    Tourism-driven development expands along barrier islands while wetlands remain critical habitat.
-                </p>
-            </div>
-        </div>
-
-        <div class="step" data-step="step5">
-            <div>
-                <h2>Inland</h2>
-                <p>
-                    Suburban sprawl replaces forests and farmland, producing patchy landscapes ideal for geese.
-                </p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- YEAR TOGGLE -->
-<div id="yearToggleContainer">
-    <div id="yearToggleLabel">Year: 2008</div>
-    <div id="yearButtons">
-        <button class="year-btn active" data-year="2008">2008</button>
-        <button class="year-btn" data-year="2013">2013</button>
-        <button class="year-btn" data-year="2018">2018</button>
-        <button class="year-btn" data-year="2023">2023</button>
-    </div>
-</div>
-
 <script>
 // DATA CONFIG
 var years = [2008, 2013, 2018, 2023];
@@ -269,10 +27,14 @@ var base = L.tileLayer(
     { maxZoom: 15 }
 ).addTo(map);
 
-map.createPane('nlcdPane');
-map.getPane('nlcdPane').style.zIndex = 350;
+map.createPane('nlcdBasePane');
+map.getPane('nlcdBasePane').style.zIndex = 340;
 
-var nlcdLayer = null;
+map.createPane('nlcdOverlayPane');
+map.getPane('nlcdOverlayPane').style.zIndex = 350;
+
+var nlcdBase2008 = null;
+var nlcdOverlay = null;
 var heatLayer = null;
 
 // LEGEND HELPERS
@@ -337,44 +99,53 @@ function updateLegendForVisibleArea() {
     updateHeatLegendRaw(visibleCounts);
 }
 
-// BUTTON STATE
-function updateYearButtons(year) {
-    document.getElementById("yearToggleLabel").textContent = "Year: " + year;
+// LOAD 2008 BASE ONCE
+function loadBase2008() {
+    if (!nlcdBase2008) {
+        nlcdBase2008 = L.tileLayer(nlcdTiles[2008] + '?v=2008-' + Date.now(), {
+            pane: 'nlcdBasePane',
+            opacity: 0.6
+        }).addTo(map);
 
-    document.querySelectorAll(".year-btn").forEach(function(btn) {
-        btn.classList.remove("active");
-        if (parseInt(btn.dataset.year) === year) {
-            btn.classList.add("active");
-        }
-    });
+        nlcdBase2008.on('tileerror', function(e) {
+            console.log("2008 base tile failed:", e.tile.src);
+        });
+    }
 }
 
 // MAP UPDATE
 function updateMap(year) {
     currentYear = year;
-    updateYearButtons(year);
+    document.getElementById("yearLabel").innerHTML = "Year: " + year;
 
-    if (nlcdLayer) {
-        map.removeLayer(nlcdLayer);
-        nlcdLayer = null;
+    // always keep 2008 as base
+    loadBase2008();
+
+    // remove old overlay
+    if (nlcdOverlay) {
+        map.removeLayer(nlcdOverlay);
+        nlcdOverlay = null;
     }
 
+    // add selected year only if not 2008
+    if (year !== 2008) {
+        nlcdOverlay = L.tileLayer(nlcdTiles[year] + '?v=' + year + '-' + Date.now(), {
+            pane: 'nlcdOverlayPane',
+            opacity: 0.6
+        }).addTo(map);
+
+        nlcdOverlay.on('tileerror', function(e) {
+            console.log("Overlay tile failed:", e.tile.src);
+        });
+    }
+
+    // remove old heat layer
     if (heatLayer) {
         map.removeLayer(heatLayer);
         heatLayer = null;
     }
 
-    nlcdLayer = L.tileLayer(nlcdTiles[year] + '?v=' + year + '-' + Date.now(), {
-        pane: 'nlcdPane',
-        opacity: 0.7
-    });
-
-    nlcdLayer.on('tileerror', function(e) {
-        console.log("Tile failed to load:", e.tile.src);
-    });
-
-    nlcdLayer.addTo(map);
-
+    // filter observations for selected year
     currentFiltered = geeseObservations.features.filter(function(f) {
         return parseInt(f.properties.year) === year;
     });
@@ -398,7 +169,7 @@ function updateMap(year) {
 
     updateLegendForVisibleArea();
 
-    console.log("Loading NLCD year:", year, nlcdTiles[year]);
+    console.log("Showing year:", year);
 }
 
 // SCROLL CONTROL
@@ -420,22 +191,18 @@ window.addEventListener('resize', function() {
     scroller.resize();
 });
 
-// UPDATE LEGEND WHEN MAP MOVES
+// update legend whenever map extent changes
 map.on('zoomend moveend', function() {
     updateLegendForVisibleArea();
 });
 
-// YEAR BUTTON EVENTS
-document.querySelectorAll(".year-btn").forEach(function(btn) {
-    btn.addEventListener("click", function() {
-        var year = parseInt(this.dataset.year);
-        updateMap(year);
-    });
+// SLIDER CONTROL
+document.getElementById("yearSlider").addEventListener("input", function() {
+    var year = years[this.value];
+    updateMap(year);
 });
 
 // INITIAL LOAD
+loadBase2008();
 updateMap(2008);
 </script>
-
-</body>
-</html>
