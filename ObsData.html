@@ -34,7 +34,6 @@ body {
     top: 0;
     width: 60%;
     height: 100vh;
-    position: sticky;
 }
 
 #map {
@@ -87,19 +86,17 @@ body {
     z-index: 999;
 }
 
-/* container controls position */
+/* LEGENDS */
 #legendContainer {
     position: absolute;
     bottom: 20px;
     left: 20px;
     z-index: 999;
-
     display: flex;
     flex-direction: column;
-    gap: 12px; /* spacing between legends */
+    gap: 12px;
 }
 
-/* individual legend boxes */
 .legend {
     background: white;
     padding: 10px 12px;
@@ -107,7 +104,7 @@ body {
     font-size: 13px;
     line-height: 1.4;
     box-shadow: 0 0 8px rgba(0,0,0,0.25);
-    min-width: 180px;
+    min-width: 200px;
 }
 
 .legend h4 {
@@ -127,6 +124,14 @@ body {
     display: inline-block;
     flex-shrink: 0;
 }
+
+.toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    font-size: 13px;
+}
 </style>
 </head>
 
@@ -141,14 +146,22 @@ body {
 
         <div class="legend" id="heatLegend">
             <h4>Geese Density</h4>
-            <div class="legend-row"><span class="legend-color" style="background:#afd4ed;"></span><span id="lowRange">Low: --</span></div>
-            <div class="legend-row"><span class="legend-color" style="background:#6fa4d9;"></span><span id="mediumRange">Medium: --</span></div>
-            <div class="legend-row"><span class="legend-color" style="background: #8856a7;"></span><span id="highRange">High: --</span></div>
+            <div class="legend-row"><span class="legend-color" style="background:blue;"></span><span id="lowRange">Low: --</span></div>
+            <div class="legend-row"><span class="legend-color" style="background:yellow;"></span><span id="mediumRange">Medium: --</span></div>
+            <div class="legend-row"><span class="legend-color" style="background:red;"></span><span id="highRange">High: --</span></div>
+            <div class="toggle-row">
+                <input type="checkbox" id="toggleHeat" checked>
+                <label for="toggleHeat">Show geese density</label>
+            </div>
         </div>
 
         <div class="legend" id="nlcdLegend">
             <h4>NLCD Land Cover</h4>
             <div class="legend-row"><span class="legend-color" style="background:#ec848b;"></span><span>Developed</span></div>
+            <div class="toggle-row">
+                <input type="checkbox" id="toggleNLCD" checked>
+                <label for="toggleNLCD">Show developed land</label>
+            </div>
         </div>
 
     </div>
@@ -205,12 +218,9 @@ Suburban sprawl replaces forests and farmland, producing patchy landscapes ideal
 </div>
 
 <!-- SLIDER -->
-<div id="sliderContainer" style="
-    width: 133px;
-    height: 65px;
-">
-<input type="range" id="yearSlider" min="0" max="3" step="1" value="0">
-<p id="yearLabel"></p>
+<div id="sliderContainer" style="width: 133px; height: 65px;">
+    <input type="range" id="yearSlider" min="0" max="3" step="1" value="0">
+    <p id="yearLabel"></p>
 </div>
 
 <script>
@@ -247,6 +257,9 @@ map.getPane('nlcdPane').style.zIndex = 350;
 
 var nlcdLayer = null;
 var heatLayer = null;
+
+var nlcdVisible = true;
+var heatVisible = true;
 
 // LEGEND HELPERS
 function formatCountRange(value) {
@@ -319,43 +332,50 @@ function updateMap(year) {
 
     if (nlcdLayer) {
         map.removeLayer(nlcdLayer);
-        nlcdLayer = null
+        nlcdLayer = null;
     }
     if (heatLayer) {
         map.removeLayer(heatLayer);
+        heatLayer = null;
     }
 
     // NLCD layer
     nlcdLayer = L.tileLayer(nlcdTiles[year] + '?v=' + year + '-' + Date.now(), {
         pane: 'nlcdPane',
         opacity: 1
-    }).addTo(map);
+    });
+
+    if (nlcdVisible) {
+        nlcdLayer.addTo(map);
+    }
 
     // Filter observations for selected year
     currentFiltered = geeseObservations.features.filter(function(f) {
         return parseInt(f.properties.year) === year;
     });
 
-    // Heatmap data stays log-scaled for better display
     var heatData = currentFiltered.map(function(f) {
         var c = f.geometry.coordinates;
         var count = Math.log((Number(f.properties.individualCount) || 1) + 1);
         return [c[1], c[0], count];
     });
 
-    // Original heatmap gradient
+    // Standard heatmap colors
     heatLayer = L.heatLayer(heatData, {
         radius: 30,
         blur: 20,
         maxZoom: 12,
         gradient: {
-            0.4: '#afd4ed',
-            0.65: '#6fa4d9',
-            1.0: '#8856a7'
+            0.3: 'blue',
+            0.6: 'yellow',
+            1.0: 'red'
         }
-    }).addTo(map);
+    });
 
-    // Update legend after drawing
+    if (heatVisible) {
+        heatLayer.addTo(map);
+    }
+
     updateLegendForVisibleArea();
 
     console.log("Loading NLCD year:", year, nlcdTiles[year]);
@@ -389,6 +409,31 @@ map.on('zoomend moveend', function() {
 document.getElementById("yearSlider").addEventListener("input", function() {
     var year = years[this.value];
     updateMap(year);
+});
+
+// TOGGLES
+document.getElementById("toggleHeat").addEventListener("change", function() {
+    heatVisible = this.checked;
+
+    if (heatLayer) {
+        if (heatVisible) {
+            heatLayer.addTo(map);
+        } else {
+            map.removeLayer(heatLayer);
+        }
+    }
+});
+
+document.getElementById("toggleNLCD").addEventListener("change", function() {
+    nlcdVisible = this.checked;
+
+    if (nlcdLayer) {
+        if (nlcdVisible) {
+            nlcdLayer.addTo(map);
+        } else {
+            map.removeLayer(nlcdLayer);
+        }
+    }
 });
 
 // INITIAL LOAD
