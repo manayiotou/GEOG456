@@ -32,9 +32,7 @@ body {
 #graphic {
     position: sticky;
     top: 0;
-    width: 60%;
-    height: 100vh;
-    position: sticky;
+    width: 75%;
 }
 
 #map {
@@ -43,13 +41,14 @@ body {
 }
 
 #text {
-    width: 40%;
-    padding: 95px;
-    background-image: url('https://img.freepik.com/free-photo/new-york-city_649448-1679.jpg?semt=ais_hybrid&w=740&q=80');
+    width: 25%;
+    padding: 40px;
+    background-image: url('https://images.stockcake.com/public/e/d/d/edd6f495-b4ee-4306-9b2c-5e1293762526_large/geese-sunset-flight-stockcake.jpg');
+    background-size: cover;
 }
 
 .step {
-    height: 100vh;
+    height: 60vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -71,35 +70,65 @@ body {
     line-height: 1.5;
 }
 
-/* SLIDER */
-#sliderContainer {
+/* YEAR TOGGLE */
+#yearToggleContainer {
     position: fixed;
     top: 20px;
     left: 45%;
     transform: translateX(-55%);
-    padding: 0px;
-    text-align: center;
-    font-size: 20px;
-    font-weight: bold;
-    background-color: whitesmoke;
-    border-radius: 10px;
+    background: rgba(245, 245, 245, 0.95);
     border: 2px solid navy;
+    border-radius: 12px;
+    padding: 10px 14px;
     z-index: 999;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
-/* container controls position */
+#yearToggleLabel {
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: navy;
+    margin-bottom: 8px;
+}
+
+#yearButtons {
+    display: flex;
+    gap: 8px;
+}
+
+.year-btn {
+    border: 1px solid navy;
+    background: white;
+    color: navy;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.year-btn:hover {
+    background: #dce8f7;
+}
+
+.year-btn.active {
+    background: navy;
+    color: white;
+}
+
+/* LEGEND */
 #legendContainer {
     position: absolute;
     bottom: 20px;
     left: 20px;
     z-index: 999;
-
     display: flex;
     flex-direction: column;
-    gap: 12px; /* spacing between legends */
+    gap: 12px;
 }
 
-/* individual legend boxes */
 .legend {
     background: white;
     padding: 10px 12px;
@@ -134,83 +163,81 @@ body {
 
 <div id="scrolly">
 
-<div id="graphic">
-    <div id="map"></div>
+    <div id="graphic">
+        <div id="map"></div>
 
-    <div id="legendContainer">
+        <div id="legendContainer">
+            <div class="legend" id="heatLegend">
+                <h4>Geese Density</h4>
+                <div class="legend-row"><span class="legend-color" style="background:#afd4ed;"></span><span id="lowRange">Low: --</span></div>
+                <div class="legend-row"><span class="legend-color" style="background:#6fa4d9;"></span><span id="mediumRange">Medium: --</span></div>
+                <div class="legend-row"><span class="legend-color" style="background:#8856a7;"></span><span id="highRange">High: --</span></div>
+            </div>
 
-        <div class="legend" id="heatLegend">
-            <h4>Geese Density</h4>
-            <div class="legend-row"><span class="legend-color" style="background:#afd4ed;"></span><span id="lowRange">Low: --</span></div>
-            <div class="legend-row"><span class="legend-color" style="background:#6fa4d9;"></span><span id="mediumRange">Medium: --</span></div>
-            <div class="legend-row"><span class="legend-color" style="background: #8856a7;"></span><span id="highRange">High: --</span></div>
+            <div class="legend" id="nlcdLegend">
+                <h4>NLCD Land Cover</h4>
+                <div class="legend-row"><span class="legend-color" style="background:#ec848b;"></span><span>Developed</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="text">
+        <div class="step" data-step="step1">
+            <div>
+                <h2>State Overview</h2>
+                <p>
+                    From 2008–2023, New Jersey shows steady urban expansion along major corridors. Land becomes more fragmented, increasing edge habitat used by geese.
+                </p>
+            </div>
         </div>
 
-        <div class="legend" id="nlcdLegend">
-            <h4>NLCD Land Cover</h4>
-            <div class="legend-row"><span class="legend-color" style="background:#ec848b;"></span><span>Developed</span></div>
+        <div class="step" data-step="step2">
+            <div>
+                <h2>Newark</h2>
+                <p>
+                    Highly urbanized across all years with minimal land cover change. Geese concentrate in parks and water infrastructure.
+                </p>
+            </div>
         </div>
 
+        <div class="step" data-step="step3">
+            <div>
+                <h2>Trenton</h2>
+                <p>
+                    Moderate suburban growth replaces agricultural land, increasing fragmented habitat.
+                </p>
+            </div>
+        </div>
+
+        <div class="step" data-step="step4">
+            <div>
+                <h2>Coast</h2>
+                <p>
+                    Tourism-driven development expands along barrier islands while wetlands remain critical habitat.
+                </p>
+            </div>
+        </div>
+
+        <div class="step" data-step="step5">
+            <div>
+                <h2>Inland</h2>
+                <p>
+                    Suburban sprawl replaces forests and farmland, producing patchy landscapes ideal for geese.
+                </p>
+            </div>
+        </div>
     </div>
 </div>
 
-<div id="text">
-
-<div class="step" data-step="step1">
-<div>
-<h2>State Overview</h2>
-<p>
-From 2008–2023, New Jersey shows steady urban expansion along major corridors. Land becomes more fragmented, increasing edge habitat used by geese.
-</p>
-</div>
-</div>
-
-<div class="step" data-step="step2">
-<div>
-<h2>Newark</h2>
-<p>
-Highly urbanized across all years with minimal land cover change. Geese concentrate in parks and water infrastructure.
-</p>
-</div>
-</div>
-
-<div class="step" data-step="step3">
-<div>
-<h2>Trenton</h2>
-<p>
-Moderate suburban growth replaces agricultural land, increasing fragmented habitat.
-</p>
-</div>
-</div>
-
-<div class="step" data-step="step4">
-<div>
-<h2>Coast</h2>
-<p>
-Tourism-driven development expands along barrier islands while wetlands remain critical habitat.
-</p>
-</div>
-</div>
-
-<div class="step" data-step="step5">
-<div>
-<h2>Inland</h2>
-<p>
-Suburban sprawl replaces forests and farmland, producing patchy landscapes ideal for geese.
-</p>
-</div>
-</div>
-
-</div>
-</div>
-
-<!-- SLIDER -->
-<div id="sliderContainer" style="
-    width: 133px;
-    height: 65px;
-">
-<input type="range" id="yearSlider" min="0" max="3" step="1" value="0">
-<p id="yearLabel"></p>
+<!-- YEAR TOGGLE -->
+<div id="yearToggleContainer">
+    <div id="yearToggleLabel">Year: 2008</div>
+    <div id="yearButtons">
+        <button class="year-btn active" data-year="2008">2008</button>
+        <button class="year-btn" data-year="2013">2013</button>
+        <button class="year-btn" data-year="2018">2018</button>
+        <button class="year-btn" data-year="2023">2023</button>
+    </div>
 </div>
 
 <script>
@@ -235,7 +262,7 @@ var scrollViews = {
 };
 
 // MAP SETUP
-var map = L.map('map').setView([40.15, -74.75], 8);
+var map = L.map('map').setView([40.15, -74.75], 8.5);
 
 var base = L.tileLayer(
     "https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
@@ -275,10 +302,8 @@ function updateHeatLegendRaw(rawCounts) {
 
     var lowMin = min;
     var lowMax = min + interval;
-
     var medMin = lowMax;
     var medMax = min + (interval * 2);
-
     var highMin = medMax;
     var highMax = max;
 
@@ -312,38 +337,54 @@ function updateLegendForVisibleArea() {
     updateHeatLegendRaw(visibleCounts);
 }
 
+// BUTTON STATE
+function updateYearButtons(year) {
+    document.getElementById("yearToggleLabel").textContent = "Year: " + year;
+
+    document.querySelectorAll(".year-btn").forEach(function(btn) {
+        btn.classList.remove("active");
+        if (parseInt(btn.dataset.year) === year) {
+            btn.classList.add("active");
+        }
+    });
+}
+
 // MAP UPDATE
 function updateMap(year) {
     currentYear = year;
-    document.getElementById("yearLabel").innerHTML = "Year: " + year;
+    updateYearButtons(year);
 
     if (nlcdLayer) {
         map.removeLayer(nlcdLayer);
-        nlcdLayer = null
+        nlcdLayer = null;
     }
+
     if (heatLayer) {
         map.removeLayer(heatLayer);
+        heatLayer = null;
     }
 
-    // NLCD layer
     nlcdLayer = L.tileLayer(nlcdTiles[year] + '?v=' + year + '-' + Date.now(), {
         pane: 'nlcdPane',
-        opacity: 1
-    }).addTo(map);
+        opacity: 0.7
+    });
 
-    // Filter observations for selected year
+    nlcdLayer.on('tileerror', function(e) {
+        console.log("Tile failed to load:", e.tile.src);
+    });
+
+    nlcdLayer.addTo(map);
+
     currentFiltered = geeseObservations.features.filter(function(f) {
         return parseInt(f.properties.year) === year;
     });
 
-    // Heatmap data stays log-scaled for better display
     var heatData = currentFiltered.map(function(f) {
         var c = f.geometry.coordinates;
         var count = Math.log((Number(f.properties.individualCount) || 1) + 1);
         return [c[1], c[0], count];
     });
 
-    // Original heatmap gradient
     heatLayer = L.heatLayer(heatData, {
         radius: 30,
         blur: 20,
@@ -355,7 +396,6 @@ function updateMap(year) {
         }
     }).addTo(map);
 
-    // Update legend after drawing
     updateLegendForVisibleArea();
 
     console.log("Loading NLCD year:", year, nlcdTiles[year]);
@@ -380,15 +420,17 @@ window.addEventListener('resize', function() {
     scroller.resize();
 });
 
-// Update legend whenever map extent changes
+// UPDATE LEGEND WHEN MAP MOVES
 map.on('zoomend moveend', function() {
     updateLegendForVisibleArea();
 });
 
-// SLIDER CONTROL
-document.getElementById("yearSlider").addEventListener("input", function() {
-    var year = years[this.value];
-    updateMap(year);
+// YEAR BUTTON EVENTS
+document.querySelectorAll(".year-btn").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+        var year = parseInt(this.dataset.year);
+        updateMap(year);
+    });
 });
 
 // INITIAL LOAD
