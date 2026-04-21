@@ -239,7 +239,10 @@ body {
 
             <div class="legend" id="nlcdLegend">
                 <h4>NLCD Land Cover</h4>
-                <div class="legend-row"><span class="legend-color" style="background:#ec848b;"></span><span>Developed</span></div>
+                <div class="legend-row"><span class="legend-color" style="background:#f4a463;"></span><span>Developed: Bare Land</span></div>
+                <div class="legend-row"><span class="legend-color" style="background:#e37d73;"></span><span>Developed: Light Intensity</span></div>
+                <div class="legend-row"><span class="legend-color" style="background:#d4556b;"></span><span>Developed: Medium Intensity</span></div>
+                <div class="legend-row  "><span class="legend-color" style="background:#b3006b;"></span><span>Developed: High Intensity</span></div>
                 <div class="toggle-row">
                     <input type="checkbox" id="toggleNLCD" checked>
                     <label for="toggleNLCD">Show developed land</label>
@@ -357,8 +360,7 @@ var scrollViews = {
 var map = L.map('map').setView([40.15, -74.65], 8);
 
 var base = L.tileLayer(
-    "https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
-    { maxZoom: 15 }
+"http://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}"    { maxZoom: 15 }
 ).addTo(map);
 
 map.createPane('nlcdPane');
