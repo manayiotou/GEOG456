@@ -8,9 +8,6 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css">
-<script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
-
 <script src="https://unpkg.com/scrollama"></script>
 <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
 
@@ -25,7 +22,7 @@ html, body {
     background: #111;
 }
 
-/* FULLSCREEN MAP */
+/* MAP */
 #map {
     position: fixed;
     inset: 0;
@@ -34,21 +31,58 @@ html, body {
     z-index: 1;
 }
 
-/* PAGE CONTENT OVERLAY */
+/* STORY OVERLAY */
 #story {
     position: relative;
     z-index: 10;
     width: 100%;
 }
-/* SCROLLING STEPS COLUMN */
+
+/* HERO */
+#hero {
+    min-height: 100vh;
+    width: 38%;
+    margin-left: auto;
+    padding-right: 3vw;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    pointer-events: auto;
+}
+
+.hero-inner {
+    width: min(420px, 90%);
+    color: white;
+    background: rgba(255,255,255,0.16);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 18px;
+    padding: 28px 32px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.28);
+    border: 1px solid rgba(255,255,255,0.18);
+}
+
+.hero-inner h1 {
+    margin: 0 0 12px 0;
+    font-size: 40px;
+    line-height: 1.1;
+}
+
+.hero-inner p {
+    margin: 0;
+    font-size: 17px;
+    line-height: 1.6;
+}
+
+/* RIGHT-SIDE STORY COLUMN */
 #features {
     position: relative;
     width: 38%;
     margin-left: auto;
     padding-right: 3vw;
-    padding-top: 12vh;
     padding-bottom: 30vh;
     box-sizing: border-box;
+    pointer-events: auto;
 }
 
 .step {
@@ -60,7 +94,7 @@ html, body {
 
 .step-card {
     width: min(420px, 90%);
-    background: rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.16);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     color: white;
@@ -68,10 +102,11 @@ html, body {
     border-radius: 18px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.28);
     border: 1px solid rgba(255,255,255,0.18);
-    opacity: 0.5;
+    opacity: 0.35;
     transform: translateY(40px);
     transition: opacity 0.45s ease, transform 0.45s ease;
 }
+
 .step.active .step-card {
     opacity: 1;
     transform: translateY(0);
@@ -96,63 +131,34 @@ html, body {
     font-style: italic;
     color: rgba(255,255,255,0.88);
 }
-#hero {
-    min-height: 100vh;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding-right: 3vw;
-    box-sizing: border-box;
+
+#ending {
+    min-height: 40vh;
 }
 
-.hero-inner {
-    width: min(420px, 90%);
-    color: white;
-    background: rgba(0,0,0,0.35);
-    backdrop-filter: blur(6px);
-    border-radius: 18px;
-    padding: 28px 32px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-}
-
-@media (max-width: 900px) {
-    #features,
-    #hero {
-        width: 100%;
-        padding-left: 20px;
-        padding-right: 20px;
-    }
-
-    .step {
-        justify-content: center;
-    }
-
-    .step-card,
-    .hero-inner {
-        width: min(500px, 92vw);
-    }
-}
-
-/* SLIDER */
+/* GLASS SLIDER */
 #sliderContainer {
     position: fixed;
     top: 20px;
     left: 50%;
     transform: translateX(-50%);
     width: 240px;
-    padding: 10px 14px 8px 14px;
+    padding: 12px 16px 10px 16px;
     text-align: center;
-    background: rgba(255,255,255,0.95);
-    border-radius: 12px;
-    border: 1px solid #888;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.22);
+    background: rgba(255,255,255,0.16);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,0.18);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.28);
     z-index: 999;
+    color: white;
 }
 
 #sliderTitle {
     font-size: 13px;
     font-weight: bold;
-    color: #333;
+    color: white;
     margin-bottom: 6px;
     letter-spacing: 0.3px;
 }
@@ -166,7 +172,7 @@ html, body {
 
 #yearSlider::-webkit-slider-runnable-track {
     height: 6px;
-    background: linear-gradient(to right, #d7d7d7, #333333);
+    background: rgba(255,255,255,0.35);
     border-radius: 999px;
 }
 
@@ -174,27 +180,27 @@ html, body {
     appearance: none;
     width: 18px;
     height: 18px;
-    background: navy;
+    background: white;
     border-radius: 50%;
-    border: 2px solid white;
-    box-shadow: 0 0 4px rgba(0,0,0,0.3);
+    border: 2px solid rgba(0,0,0,0.15);
+    box-shadow: 0 0 6px rgba(0,0,0,0.25);
     margin-top: -6px;
     cursor: pointer;
 }
 
 #yearSlider::-moz-range-track {
     height: 6px;
-    background: linear-gradient(to right, #d7d7d7, #aac7e8);
+    background: rgba(255,255,255,0.35);
     border-radius: 999px;
 }
 
 #yearSlider::-moz-range-thumb {
     width: 18px;
     height: 18px;
-    background: navy;
-    border: 2px solid white;
+    background: white;
+    border: 2px solid rgba(0,0,0,0.15);
     border-radius: 50%;
-    box-shadow: 0 0 4px rgba(0,0,0,0.3);
+    box-shadow: 0 0 6px rgba(0,0,0,0.25);
     cursor: pointer;
 }
 
@@ -202,7 +208,7 @@ html, body {
     display: flex;
     justify-content: space-between;
     font-size: 11px;
-    color: #444;
+    color: rgba(255,255,255,0.9);
     margin-top: 2px;
 }
 
@@ -210,10 +216,10 @@ html, body {
     margin: 6px 0 0 0;
     font-size: 13px;
     font-weight: bold;
-    color: navy;
+    color: white;
 }
 
-/* LEGENDS */
+/* GLASS LEGENDS */
 #legendContainer {
     position: fixed;
     bottom: 20px;
@@ -225,17 +231,22 @@ html, body {
 }
 
 .legend {
-    background: rgba(255,255,255,0.95);
-    padding: 10px 12px;
-    border-radius: 8px;
+    background: rgba(255,255,255,0.16);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 12px 14px;
+    border-radius: 18px;
     font-size: 13px;
     line-height: 1.4;
-    box-shadow: 0 0 8px rgba(0,0,0,0.25);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.28);
+    border: 1px solid rgba(255,255,255,0.18);
     min-width: 210px;
+    color: white;
 }
 
 .legend h4 {
-    margin: 0 0 6px 0;
+    margin: 0 0 8px 0;
+    color: white;
 }
 
 .legend-row {
@@ -258,26 +269,24 @@ html, body {
     gap: 8px;
     margin-top: 6px;
     font-size: 13px;
+    color: white;
 }
 
-/* END SPACER */
-#ending {
-    min-height: 55vh;
-}
-
+/* MOBILE */
 @media (max-width: 900px) {
-    .step,
-    .step.right,
-    .step.left {
-        justify-content: center;
+    #hero,
+    #features {
+        width: 100%;
         padding-left: 20px;
         padding-right: 20px;
     }
 
+    .step {
+        justify-content: center;
+    }
+
     .step-card,
-    .step.right .step-card,
-    .step.left .step-card {
-        margin: 0;
+    .hero-inner {
         width: min(500px, 92vw);
     }
 
@@ -339,18 +348,17 @@ html, body {
 </div>
 
 <div id="story">
-
     <section id="hero">
         <div class="hero-inner">
             <h1>Canada Goose Observations and Development in New Jersey</h1>
             <p>
-                Scroll to move through different locations in New Jersey and see how goose observations relate to changing patterns of developed land over time.
+                Scroll down the story column on the right to move through different locations in New Jersey and compare goose observations with changing developed land over time.
             </p>
         </div>
     </section>
 
     <section id="features">
-        <div class="step left" data-step="step1">
+        <div class="step" data-step="step1">
             <div class="step-card">
                 <h2>State Overview</h2>
                 <p>
@@ -363,7 +371,7 @@ html, body {
             </div>
         </div>
 
-        <div class="step right" data-step="step2">
+        <div class="step" data-step="step2">
             <div class="step-card">
                 <h2>Newark</h2>
                 <p>
@@ -376,7 +384,7 @@ html, body {
             </div>
         </div>
 
-        <div class="step left" data-step="step3">
+        <div class="step" data-step="step3">
             <div class="step-card">
                 <h2>Trenton</h2>
                 <p>
@@ -389,7 +397,7 @@ html, body {
             </div>
         </div>
 
-        <div class="step right" data-step="step4">
+        <div class="step" data-step="step4">
             <div class="step-card">
                 <h2>Coast</h2>
                 <p>
@@ -402,7 +410,7 @@ html, body {
             </div>
         </div>
 
-        <div class="step left" data-step="step5">
+        <div class="step" data-step="step5">
             <div class="step-card">
                 <h2>Inland</h2>
                 <p>
@@ -446,7 +454,12 @@ var scrollViews = {
 // MAP SETUP
 // ---------------------------
 var map = L.map('map', {
-    zoomControl: true
+    zoomControl: true,
+    scrollWheelZoom: true,
+    dragging: true,
+    doubleClickZoom: true,
+    boxZoom: true,
+    keyboard: true
 }).setView([40.15, -74.65], 8);
 
 var base = L.tileLayer(
@@ -462,7 +475,7 @@ var heatLayer = null;
 var nlcdVisible = true;
 var heatVisible = true;
 
-// Preload NLCD layers once
+// Preload NLCD layers
 var nlcdLayers = {};
 years.forEach(function(year) {
     nlcdLayers[year] = L.tileLayer(nlcdTiles[year], {
@@ -471,7 +484,7 @@ years.forEach(function(year) {
     });
 });
 
-// Group observations once by year
+// Group observations by year once
 var observationsByYear = {};
 years.forEach(function(year) {
     observationsByYear[year] = geeseObservations.features.filter(function(f) {
@@ -510,8 +523,8 @@ function updateHeatLegendRaw(rawCounts) {
         return;
     }
 
-    var min = Math.min(...rawCounts);
-    var max = Math.max(...rawCounts);
+    var min = Math.min.apply(null, rawCounts);
+    var max = Math.max.apply(null, rawCounts);
 
     if (min === max) {
         document.getElementById("lowRange").textContent = "Low: " + formatCountRange(min);
@@ -524,19 +537,15 @@ function updateHeatLegendRaw(rawCounts) {
 
     var lowMin = min;
     var lowMax = min + interval;
-
     var medMin = lowMax;
     var medMax = min + (interval * 2);
-
     var highMin = medMax;
     var highMax = max;
 
     document.getElementById("lowRange").textContent =
         "Low: " + formatCountRange(lowMin) + "–" + formatCountRange(lowMax);
-
     document.getElementById("mediumRange").textContent =
         "Medium: " + formatCountRange(medMin) + "–" + formatCountRange(medMax);
-
     document.getElementById("highRange").textContent =
         "High: " + formatCountRange(highMin) + "–" + formatCountRange(highMax);
 }
@@ -597,14 +606,20 @@ var scroller = scrollama();
 
 scroller.setup({
     step: ".step",
-    offset: 0.55
+    offset: 0.6
 }).onStepEnter(function(response) {
+    document.querySelectorAll(".step").forEach(function(stepEl) {
+        stepEl.classList.remove("active");
+    });
+
+    response.element.classList.add("active");
+
     var step = response.element.dataset.step;
     var view = scrollViews[step];
 
     if (view) {
         map.flyTo(view.center, view.zoom, {
-            duration: 1.6
+            duration: 1.5
         });
     }
 });
@@ -613,7 +628,6 @@ window.addEventListener('resize', function() {
     scroller.resize();
 });
 
-// Update legend on move
 map.on('zoomend moveend', function() {
     updateLegendForVisibleArea();
 });
@@ -664,8 +678,20 @@ document.getElementById("toggleNLCD").addEventListener("change", function() {
         }
     }
 });
+function stopWheelToMap(el) {
+    el.addEventListener("wheel", function(e) {
+        e.stopPropagation();
+    }, { passive: true });
+}
+stopWheelToMap(document.getElementById("hero"));
+stopWheelToMap(document.getElementById("features"));
+
+document.querySelectorAll(".step-card, .hero-inner").forEach(function(el) {
+    stopWheelToMap(el);
+});
 
 updateMap(2008);
+document.querySelector('.step[data-step="step1"]').classList.add("active");
 </script>
 
 </body>
