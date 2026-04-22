@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Final Map</title>
+<title>Geese & Development Scrollytelling</title>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -17,87 +17,137 @@
 <script src="GeeseData.js"></script>
 
 <style>
-body {
+html, body {
     margin: 0;
+    padding: 0;
     font-family: Arial, sans-serif;
-    background-image: url('https://www.shutterstock.com/image-photo/new-york-city-skyline-large-260nw-2456657079.jpg');
-    background-size: cover;
-    background-position: center;
+    overflow-x: hidden;
+    background: #111;
 }
 
-#scrolly {
-    display: flex;
-    width: 100%;
-}
-
-#graphic {
-    position: sticky;
-    top: 0;
-    width: 60%;
-    height: 100vh;
-}
-
+/* FULLSCREEN MAP */
 #map {
+    position: fixed;
+    inset: 0;
     width: 100%;
-    height: 100%;
-}
-
-#text {
-    width: 40%;
-    padding: 95px;
-    background-image: url('https://img.freepik.com/free-photo/new-york-city_649448-1679.jpg?semt=ais_hybrid&w=740&q=80');
-    background-size: cover;
-    background-position: center;
-}
-
-.step {
     height: 100vh;
+    z-index: 1;
+}
+
+/* PAGE CONTENT OVERLAY */
+#story {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    pointer-events: none;
+}
+
+/* TITLE / HERO */
+#hero {
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 40px;
-    background: #333333;
+    box-sizing: border-box;
 }
 
-.step div {
-    max-width: 520px;
-    background: rgba(255,255,255,0.82);
-    padding: 24px 28px;
-    border-radius: 14px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+.hero-inner {
+    max-width: 760px;
+    text-align: center;
+    color: white;
+    background: rgba(0,0,0,0.35);
+    backdrop-filter: blur(6px);
+    border-radius: 18px;
+    padding: 28px 32px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    pointer-events: auto;
 }
 
-.step h2 {
+.hero-inner h1 {
+    margin: 0 0 12px 0;
+    font-size: 42px;
+    line-height: 1.1;
+}
+
+.hero-inner p {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+/* SCROLLING STEPS COLUMN */
+#features {
+    position: relative;
+    width: 100%;
+}
+
+.step {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 7vw;
+    padding-right: 7vw;
+    box-sizing: border-box;
+}
+
+.step-card {
+    width: min(420px, 88vw);
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: white;
+    padding: 22px 24px;
+    border-radius: 18px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.28);
+    border: 1px solid rgba(255,255,255,0.18);
+    pointer-events: auto;
+}
+
+.step-card h2 {
     margin-top: 0;
-    margin-bottom: 18px;
+    margin-bottom: 14px;
     font-size: 28px;
-    color: #1f2d3d;
+    line-height: 1.2;
 }
 
-.step p {
+.step-card p {
     font-size: 16px;
     line-height: 1.6;
-    color: #222;
     margin-bottom: 10px;
 }
 
 .step-note {
-    margin-top: 14px;
+    margin-top: 12px;
     font-size: 13px;
     font-style: italic;
-    color: #444;
+    color: rgba(255,255,255,0.88);
+}
+
+/* alternate left/right for more map visibility */
+.step.right {
+    justify-content: flex-end;
+}
+
+.step.right .step-card {
+    margin-right: 2vw;
+}
+
+.step.left .step-card {
+    margin-left: 2vw;
 }
 
 /* SLIDER */
 #sliderContainer {
     position: fixed;
     top: 20px;
-    left: 43%;
-    transform: translateX(-57%);
-    width: 220px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 240px;
     padding: 10px 14px 8px 14px;
     text-align: center;
-    background: rgba(255,255,255,0.96);
+    background: rgba(255,255,255,0.95);
     border-radius: 12px;
     border: 1px solid #888;
     box-shadow: 0 2px 10px rgba(0,0,0,0.22);
@@ -170,7 +220,7 @@ body {
 
 /* LEGENDS */
 #legendContainer {
-    position: absolute;
+    position: fixed;
     bottom: 20px;
     left: 20px;
     z-index: 999;
@@ -180,13 +230,13 @@ body {
 }
 
 .legend {
-    background: rgba(255,255,255,0.96);
+    background: rgba(255,255,255,0.95);
     padding: 10px 12px;
     border-radius: 8px;
     font-size: 13px;
     line-height: 1.4;
     box-shadow: 0 0 8px rgba(0,0,0,0.25);
-    min-width: 200px;
+    min-width: 210px;
 }
 
 .legend h4 {
@@ -214,108 +264,47 @@ body {
     margin-top: 6px;
     font-size: 13px;
 }
+
+/* END SPACER */
+#ending {
+    min-height: 55vh;
+}
+
+@media (max-width: 900px) {
+    .step,
+    .step.right,
+    .step.left {
+        justify-content: center;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .step-card,
+    .step.right .step-card,
+    .step.left .step-card {
+        margin: 0;
+        width: min(500px, 92vw);
+    }
+
+    .hero-inner h1 {
+        font-size: 32px;
+    }
+
+    #sliderContainer {
+        width: 220px;
+    }
+
+    #legendContainer {
+        left: 12px;
+        bottom: 12px;
+    }
+}
 </style>
 </head>
 
 <body>
 
-<div id="scrolly">
-    <div id="graphic">
-        <div id="map"></div>
-
-        <div id="legendContainer">
-            <div class="legend" id="heatLegend">
-                <h4>Geese Density</h4>
-                <div class="legend-row"><span class="legend-color" style="background:blue;"></span><span id="lowRange">Low: --</span></div>
-                <div class="legend-row"><span class="legend-color" style="background:yellow;"></span><span id="mediumRange">Medium: --</span></div>
-                <div class="legend-row"><span class="legend-color" style="background:red;"></span><span id="highRange">High: --</span></div>
-                <div class="toggle-row">
-                    <input type="checkbox" id="toggleHeat" checked>
-                    <label for="toggleHeat">Show geese density</label>
-                </div>
-            </div>
-
-            <div class="legend" id="nlcdLegend">
-                <h4>NLCD Land Cover</h4>
-                <div class="legend-row"><span class="legend-color" style="background:#f4a463;"></span><span>Developed: Bare Land</span></div>
-                <div class="legend-row"><span class="legend-color" style="background:#e37d73;"></span><span>Developed: Light Intensity</span></div>
-                <div class="legend-row"><span class="legend-color" style="background:#d4556b;"></span><span>Developed: Medium Intensity</span></div>
-                <div class="legend-row"><span class="legend-color" style="background:#b3006b;"></span><span>Developed: High Intensity</span></div>
-                <div class="toggle-row">
-                    <input type="checkbox" id="toggleNLCD" checked>
-                    <label for="toggleNLCD">Show developed land</label>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="text">
-        <div class="step" data-step="step1">
-            <div>
-                <h2>State Overview</h2>
-                <p>
-                    At the statewide scale, developed land is concentrated along major transportation corridors and metropolitan regions, especially in northeastern New Jersey. Canada goose observations also cluster within these more accessible and human-modified landscapes.
-                </p>
-                <p>
-                    This broad pattern suggests that development does not simply remove habitat. For an adaptable species like the Canada goose, suburban and urban land cover can create lawns, ponds, reservoirs, and edge environments that support feeding and roosting.
-                </p>
-                <p class="step-note">Key idea: statewide observation density often overlaps with developed landscapes.</p>
-            </div>
-        </div>
-
-        <div class="step" data-step="step2">
-            <div>
-                <h2>Newark</h2>
-                <p>
-                    The Newark area remains one of the most consistently urbanized parts of New Jersey across all years. Because development is already extensive here, land-cover change is less dramatic than in expanding suburban regions.
-                </p>
-                <p>
-                    Even in this highly built environment, geese remain concentrated around parks, golf courses, reservoirs, and stormwater infrastructure. This shows that dense metropolitan areas can still provide suitable habitat when open grass and water are present.
-                </p>
-                <p class="step-note">Key idea: heavy urbanization can still support geese through maintained green space and water infrastructure.</p>
-            </div>
-        </div>
-
-        <div class="step" data-step="step3">
-            <div>
-                <h2>Trenton</h2>
-                <p>
-                    Around Trenton and central New Jersey, development appears more transitional. Suburban growth expands outward over time, replacing less-developed land with patchier residential and commercial landscapes.
-                </p>
-                <p>
-                    These mixed environments may be especially favorable for geese because they combine open lawns, fragmented edges, and nearby water. As a result, central New Jersey offers a strong example of how suburban expansion can coincide with increased observation density.
-                </p>
-                <p class="step-note">Key idea: suburban landscapes may create especially favorable conditions for geese.</p>
-            </div>
-        </div>
-
-        <div class="step" data-step="step4">
-            <div>
-                <h2>Coast</h2>
-                <p>
-                    Along the coast, development expands around towns and barrier-island communities, but wetlands and open water remain essential parts of the landscape. This creates a different relationship between human development and habitat than in inland suburban areas.
-                </p>
-                <p>
-                    Goose observations here likely reflect both developed land use and the continued importance of coastal ecological features. The coast therefore highlights how natural habitat and built environments can interact rather than simply replace one another.
-                </p>
-                <p class="step-note">Key idea: coastal observations reflect both human land use and persistent wetland habitat.</p>
-            </div>
-        </div>
-
-        <div class="step" data-step="step5">
-            <div>
-                <h2>Inland</h2>
-                <p>
-                    In inland New Jersey, suburban expansion produces increasingly fragmented landscapes that mix developed land, open grassy areas, and nearby water. These patterns are important because they closely match the habitat preferences of Canada geese.
-                </p>
-                <p>
-                    Rather than showing a simple loss of wildlife space, this pattern suggests that development can favor adaptable species while altering ecological balance. In this sense, goose concentration becomes one visible outcome of broader land-use change.
-                </p>
-                <p class="step-note">Key idea: development may not reduce goose habitat as much as it reshapes it in their favor.</p>
-            </div>
-        </div>
-    </div>
-</div>
+<div id="map"></div>
 
 <div id="sliderContainer">
     <div id="sliderTitle">Observation Year</div>
@@ -327,6 +316,112 @@ body {
         <span>2023</span>
     </div>
     <p id="yearLabel">Year: 2008</p>
+</div>
+
+<div id="legendContainer">
+    <div class="legend" id="heatLegend">
+        <h4>Geese Density</h4>
+        <div class="legend-row"><span class="legend-color" style="background:blue;"></span><span id="lowRange">Low: --</span></div>
+        <div class="legend-row"><span class="legend-color" style="background:yellow;"></span><span id="mediumRange">Medium: --</span></div>
+        <div class="legend-row"><span class="legend-color" style="background:red;"></span><span id="highRange">High: --</span></div>
+        <div class="toggle-row">
+            <input type="checkbox" id="toggleHeat" checked>
+            <label for="toggleHeat">Show geese density</label>
+        </div>
+    </div>
+
+    <div class="legend" id="nlcdLegend">
+        <h4>NLCD Land Cover</h4>
+        <div class="legend-row"><span class="legend-color" style="background:#f4a463;"></span><span>Developed: Bare Land</span></div>
+        <div class="legend-row"><span class="legend-color" style="background:#e37d73;"></span><span>Developed: Light Intensity</span></div>
+        <div class="legend-row"><span class="legend-color" style="background:#d4556b;"></span><span>Developed: Medium Intensity</span></div>
+        <div class="legend-row"><span class="legend-color" style="background:#b3006b;"></span><span>Developed: High Intensity</span></div>
+        <div class="toggle-row">
+            <input type="checkbox" id="toggleNLCD" checked>
+            <label for="toggleNLCD">Show developed land</label>
+        </div>
+    </div>
+</div>
+
+<div id="story">
+
+    <section id="hero">
+        <div class="hero-inner">
+            <h1>Canada Goose Observations and Development in New Jersey</h1>
+            <p>
+                Scroll to move through different locations in New Jersey and see how goose observations relate to changing patterns of developed land over time.
+            </p>
+        </div>
+    </section>
+
+    <section id="features">
+        <div class="step left" data-step="step1">
+            <div class="step-card">
+                <h2>State Overview</h2>
+                <p>
+                    At the statewide scale, developed land is concentrated along major transportation corridors and metropolitan regions, especially in northeastern New Jersey. Canada goose observations also cluster within these more accessible and human-modified landscapes.
+                </p>
+                <p>
+                    This broad pattern suggests that development does not simply remove habitat. For an adaptable species like the Canada goose, suburban and urban land cover can create lawns, ponds, reservoirs, and edge environments that support feeding and roosting.
+                </p>
+                <p class="step-note">Key idea: statewide observation density often overlaps with developed landscapes.</p>
+            </div>
+        </div>
+
+        <div class="step right" data-step="step2">
+            <div class="step-card">
+                <h2>Newark</h2>
+                <p>
+                    The Newark area remains one of the most consistently urbanized parts of New Jersey across all years. Because development is already extensive here, land-cover change is less dramatic than in expanding suburban regions.
+                </p>
+                <p>
+                    Even in this highly built environment, geese remain concentrated around parks, golf courses, reservoirs, and stormwater infrastructure. This shows that dense metropolitan areas can still provide suitable habitat when open grass and water are present.
+                </p>
+                <p class="step-note">Key idea: heavy urbanization can still support geese through maintained green space and water infrastructure.</p>
+            </div>
+        </div>
+
+        <div class="step left" data-step="step3">
+            <div class="step-card">
+                <h2>Trenton</h2>
+                <p>
+                    Around Trenton and central New Jersey, development appears more transitional. Suburban growth expands outward over time, replacing less-developed land with patchier residential and commercial landscapes.
+                </p>
+                <p>
+                    These mixed environments may be especially favorable for geese because they combine open lawns, fragmented edges, and nearby water. As a result, central New Jersey offers a strong example of how suburban expansion can coincide with increased observation density.
+                </p>
+                <p class="step-note">Key idea: suburban landscapes may create especially favorable conditions for geese.</p>
+            </div>
+        </div>
+
+        <div class="step right" data-step="step4">
+            <div class="step-card">
+                <h2>Coast</h2>
+                <p>
+                    Along the coast, development expands around towns and barrier-island communities, but wetlands and open water remain essential parts of the landscape. This creates a different relationship between human development and habitat than in inland suburban areas.
+                </p>
+                <p>
+                    Goose observations here likely reflect both developed land use and the continued importance of coastal ecological features. The coast therefore highlights how natural habitat and built environments can interact rather than simply replace one another.
+                </p>
+                <p class="step-note">Key idea: coastal observations reflect both human land use and persistent wetland habitat.</p>
+            </div>
+        </div>
+
+        <div class="step left" data-step="step5">
+            <div class="step-card">
+                <h2>Inland</h2>
+                <p>
+                    In inland New Jersey, suburban expansion produces increasingly fragmented landscapes that mix developed land, open grassy areas, and nearby water. These patterns are important because they closely match the habitat preferences of Canada geese.
+                </p>
+                <p>
+                    Rather than showing a simple loss of wildlife space, this pattern suggests that development can favor adaptable species while altering ecological balance. In this sense, goose concentration becomes one visible outcome of broader land-use change.
+                </p>
+                <p class="step-note">Key idea: development may not reduce goose habitat as much as it reshapes it in their favor.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="ending"></section>
 </div>
 
 <script>
@@ -355,7 +450,9 @@ var scrollViews = {
 // ---------------------------
 // MAP SETUP
 // ---------------------------
-var map = L.map('map').setView([40.15, -74.65], 8);
+var map = L.map('map', {
+    zoomControl: true
+}).setView([40.15, -74.65], 8);
 
 var base = L.tileLayer(
     "https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
@@ -365,14 +462,12 @@ var base = L.tileLayer(
 map.createPane('nlcdPane');
 map.getPane('nlcdPane').style.zIndex = 350;
 
-// Current visible layers
 var nlcdLayer = null;
 var heatLayer = null;
-
 var nlcdVisible = true;
 var heatVisible = true;
 
-// Preload NLCD tile layers once
+// Preload NLCD layers once
 var nlcdLayers = {};
 years.forEach(function(year) {
     nlcdLayers[year] = L.tileLayer(nlcdTiles[year], {
@@ -381,7 +476,7 @@ years.forEach(function(year) {
     });
 });
 
-// Precompute observations by year once
+// Group observations once by year
 var observationsByYear = {};
 years.forEach(function(year) {
     observationsByYear[year] = geeseObservations.features.filter(function(f) {
@@ -478,7 +573,6 @@ function updateMap(year) {
     currentYear = year;
     document.getElementById("yearLabel").textContent = "Year: " + year;
 
-    // Switch NLCD layer without rebuilding it
     if (nlcdLayer) {
         map.removeLayer(nlcdLayer);
     }
@@ -489,7 +583,6 @@ function updateMap(year) {
         nlcdLayer.addTo(map);
     }
 
-    // Pull already grouped year data
     currentFiltered = observationsByYear[year];
 
     var heatData = currentFiltered.map(function(f) {
@@ -498,12 +591,8 @@ function updateMap(year) {
         return [c[1], c[0], count];
     });
 
-    // Update existing heat layer instead of rebuilding it
     heatLayer.setLatLngs(heatData);
-
     updateLegendForVisibleArea();
-
-    console.log("Showing NLCD year:", year);
 }
 
 // ---------------------------
@@ -513,21 +602,23 @@ var scroller = scrollama();
 
 scroller.setup({
     step: ".step",
-    offset: 0.6
+    offset: 0.55
 }).onStepEnter(function(response) {
     var step = response.element.dataset.step;
     var view = scrollViews[step];
 
-    map.flyTo(view.center, view.zoom, {
-        duration: 1.5
-    });
+    if (view) {
+        map.flyTo(view.center, view.zoom, {
+            duration: 1.6
+        });
+    }
 });
 
 window.addEventListener('resize', function() {
     scroller.resize();
 });
 
-// Update legend whenever map extent changes
+// Update legend on move
 map.on('zoomend moveend', function() {
     updateLegendForVisibleArea();
 });
@@ -548,7 +639,6 @@ slider.addEventListener("input", function() {
     }, 120);
 });
 
-// Also update immediately when user releases slider
 slider.addEventListener("change", function() {
     var year = years[this.value];
     clearTimeout(sliderTimeout);
@@ -580,9 +670,6 @@ document.getElementById("toggleNLCD").addEventListener("change", function() {
     }
 });
 
-// ---------------------------
-// INITIAL LOAD
-// ---------------------------
 updateMap(2008);
 </script>
 
