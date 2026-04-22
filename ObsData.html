@@ -39,61 +39,27 @@ html, body {
     position: relative;
     z-index: 10;
     width: 100%;
-    pointer-events: none;
 }
-
-/* TITLE / HERO */
-#hero {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px;
-    box-sizing: border-box;
-}
-
-.hero-inner {
-    max-width: 760px;
-    text-align: center;
-    color: white;
-    background: rgba(0,0,0,0.35);
-    backdrop-filter: blur(6px);
-    border-radius: 18px;
-    padding: 28px 32px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-    pointer-events: auto;
-}
-
-.hero-inner h1 {
-    margin: 0 0 12px 0;
-    font-size: 42px;
-    line-height: 1.1;
-}
-
-.hero-inner p {
-    margin: 0;
-    font-size: 18px;
-    line-height: 1.6;
-}
-
 /* SCROLLING STEPS COLUMN */
 #features {
     position: relative;
-    width: 100%;
+    width: 38%;
+    margin-left: auto;
+    padding-right: 3vw;
+    padding-top: 12vh;
+    padding-bottom: 30vh;
+    box-sizing: border-box;
 }
 
 .step {
     min-height: 100vh;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    padding-left: 7vw;
-    padding-right: 7vw;
-    box-sizing: border-box;
+    justify-content: flex-end;
 }
 
 .step-card {
-    width: min(420px, 88vw);
+    width: min(420px, 90%);
     background: rgba(255,255,255,0.15);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
@@ -102,7 +68,13 @@ html, body {
     border-radius: 18px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.28);
     border: 1px solid rgba(255,255,255,0.18);
-    pointer-events: auto;
+    opacity: 0.35;
+    transform: translateY(40px);
+    transition: opacity 0.45s ease, transform 0.45s ease;
+}
+.step.active .step-card {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .step-card h2 {
@@ -124,18 +96,41 @@ html, body {
     font-style: italic;
     color: rgba(255,255,255,0.88);
 }
-
-/* alternate left/right for more map visibility */
-.step.right {
+#hero {
+    min-height: 100vh;
+    display: flex;
     justify-content: flex-end;
+    align-items: center;
+    padding-right: 3vw;
+    box-sizing: border-box;
 }
 
-.step.right .step-card {
-    margin-right: 2vw;
+.hero-inner {
+    width: min(420px, 90%);
+    color: white;
+    background: rgba(0,0,0,0.35);
+    backdrop-filter: blur(6px);
+    border-radius: 18px;
+    padding: 28px 32px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
 }
 
-.step.left .step-card {
-    margin-left: 2vw;
+@media (max-width: 900px) {
+    #features,
+    #hero {
+        width: 100%;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .step {
+        justify-content: center;
+    }
+
+    .step-card,
+    .hero-inner {
+        width: min(500px, 92vw);
+    }
 }
 
 /* SLIDER */
