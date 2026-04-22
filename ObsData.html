@@ -31,14 +31,13 @@ html, body {
     z-index: 1;
 }
 
-/* STORY OVERLAY */
 #story {
     position: relative;
     z-index: 10;
     width: 100%;
+    pointer-events: none;
 }
 
-/* HERO */
 #hero {
     min-height: 100vh;
     width: 38%;
@@ -74,7 +73,6 @@ html, body {
     line-height: 1.6;
 }
 
-/* RIGHT-SIDE STORY COLUMN */
 #features {
     position: relative;
     width: 38%;
@@ -130,6 +128,13 @@ html, body {
     font-size: 13px;
     font-style: italic;
     color: rgba(255,255,255,0.88);
+}
+
+.hero-inner,
+.step-card,
+#sliderContainer,
+#legendContainer {
+    pointer-events: auto;
 }
 
 #ending {
