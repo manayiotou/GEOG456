@@ -683,17 +683,6 @@ document.getElementById("toggleNLCD").addEventListener("change", function() {
         }
     }
 });
-function stopWheelToMap(el) {
-    el.addEventListener("wheel", function(e) {
-        e.stopPropagation();
-    }, { passive: true });
-}
-stopWheelToMap(document.getElementById("hero"));
-stopWheelToMap(document.getElementById("features"));
-
-document.querySelectorAll(".step-card, .hero-inner").forEach(function(el) {
-    stopWheelToMap(el);
-});
 
 updateMap(2008);
 document.querySelector('.step[data-step="step1"]').classList.add("active");
