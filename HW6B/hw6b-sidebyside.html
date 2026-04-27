@@ -1,0 +1,90 @@
+<htmL>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+          /* Most CSS created using ChatGPT */
+        body {
+
+          margin: 0; /* Remove default margin */
+          padding: 0; /* Remove default padding */
+          overflow-x: hidden; /* Prevent overflow: something you might want to have for maps on a cellphone screen */
+          background-color: black; /* Just for demonstration */
+          color: white;
+          
+        }
+        h1 {
+          text-align: center;
+          padding-top: 20px;
+        }
+        .row {
+          /* width: 600px;  */
+          width: 95vw;
+          background-color: rgb(28, 28, 28); /* Just for demonstration */
+          padding: 20px;
+          border: 1px solid black;
+          display: flex;
+        }
+
+        p {
+          padding-top: 1%;
+          padding-right: 5%;
+          padding-left: 5%;
+          font-size: 20px;
+        }
+        
+        /* Creates 3 equal columns */
+        .column {
+          flex: 33.33%;
+          padding: 10px;
+          overflow: hidden; /* Prevent overflow */
+        }
+        </style>
+        </head>
+
+<body>
+    <h1>Land Cover Images Side by Side </h1>
+    <div class="row" style="border-radius: 4px; border-style: solid; border-color: white;">
+        <div class="column">
+          <img  src="./HW6_BigSky2005.png" alt="2005" style="width:100%">
+        </div>
+        <div class="column">
+            <img  src="./HW6_BigSky2011.png" alt="2011" style="width:100%">
+        </div>
+        <div class="column">
+            <img  src="./HW6_BigSky2021.png" alt="2021" style="width:100%">
+        </div>
+      </div>
+
+
+      
+<p>Between 2005 and 2021, land in Big Sky, Montana, shifted from a primarily checkerboarded, 
+    rural landscape into a highly developed, high-end resort destination. This transformation 
+    involved significant land consolidation, intense infrastructure development, and a shift 
+    toward massive private development projects.
+</p> 
+<p>In this specific area of Big Sky, the land change is visible over the 16-year period, 
+    with the 2005 image showing a more rural landscape with scattered development, while the 
+    2021 image shows more expanded development, with resorts and private properties dominating the landscape. 
+    The 2011 image shows a transition period, with some development but not as extensive as in 2021.
+</p>
+<p>The 2021 satellite image was captured during snowfall, which may obscure some of the land changes, 
+    but the overall trend of increased development and land consolidation is still evident.The land development 
+    highlights the increasing tourism and real estate growth in Big Sky, Montana, which has transformed the area 
+    into a popular destination for outdoor recreation and luxury living.
+</p>
+      <script>
+
+        // This script was written by ChatGPT. It is commonly used to detect any changes in the browser size and readjust the sizes of elements on the screen.
+        // Set the width of .row to match the width of the screen
+  
+        // window.addEventListener('resize', function() {
+        //     var row = document.querySelector('.row');
+        //     row.style.width = window.innerWidth/1.05 + 'px';
+        //     // notice that I have divided the width by 1.05, I had to do this because for some reason the images kept extending the row div
+        // });
+
+        // // Trigger the resize event to initially set the width
+        // window.dispatchEvent(new Event('resize'));
+    
+    </script>
+</body>
