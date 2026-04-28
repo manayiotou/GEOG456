@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Big Sky Land Cover Change</title>
+
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    color: white;
+    font-size: 20px;
+    height: 100vh;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
+
+h3 {
+    color: white;
+    position: fixed;
+    font-size: 20px;
+    top: 20px;
+    left: 20px;
+    margin: 0;
+}
+
+#myP {
+    position: fixed;
+    top: 45px;
+    left: 20px;
+    color: white;
+    margin: 0;
+}
+
+#image_container {
+    width: 100%;
+    max-width: 600px;
+    height: 75vh;
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#image_container img {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#before {
+    z-index: 1;
+    opacity: 1;
+}
+
+#middle {
+    z-index: 2;
+    opacity: 0;
+}
+
+#after {
+    z-index: 3;
+    opacity: 0;
+}
+
+#myText {
+    color: white;
+    width: 100vw;
+    max-width: 600px;
+    height: 25vh;
+    background-color: rgba(35, 95, 95, 0.5);
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    overflow-y: scroll;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+#myText div {
+    min-height: 25vh;
+    padding-bottom: 40px;
+}
+
+#yAfter {
+    background-color: rgba(35, 95, 95, 0.5);
+}
+
+h1 {
+    margin-top: 0;
+}
+
+p {
+    line-height: 1.5;
+}
+</style>
+</head>
+
+<body>
+
+<h3 id="h3scroll">Big Sky Land Cover Change</h3>
+<p id="myP">Scroll the text box to see the image change</p>
+
+<div id="image_container">
+    <img id="after" src="./HW6_BigSky2021.png" alt="Big Sky 2021">
+    <img id="middle" src="./HW6_BigSky2011.png" alt="Big Sky 2011">
+    <img id="before" src="./HW6_BigSky2005.png" alt="Big Sky 2005">
+</div>
+
+<div id="myText">
+    <div id="yBefore">
+        <h1>Year 2005</h1>
+        <p>
+            Between 2005 and 2021, land in Big Sky, Montana, shifted from a primarily checkerboarded,
+            rural landscape into a highly developed, high-end resort destination. This transformation
+            involved significant land consolidation, intense infrastructure development, and a shift
+            toward massive private development projects.
+        </p>
+    </div>
+
+    <div id="yMiddle">
+        <h1>Year 2011</h1>
+        <p>
+            By 2011, Big Sky was in a transition period. Some development had expanded compared to
+            2005, but the landscape had not yet reached the level of resort growth visible in 2021.
+            This middle image helps show the gradual shift from scattered development toward more
+            concentrated infrastructure and private property growth.
+        </p>
+    </div>
+
+    <div id="yAfter">
+        <h1>Year 2021</h1>
+        <p>
+            The 2021 satellite image was captured during snowfall, which may obscure some of the land
+            changes, but the overall trend of increased development and land consolidation is still
+            evident. The land development highlights increasing tourism and real estate growth in Big Sky,
+            Montana, which has transformed the area into a popular destination for outdoor recreation
+            and luxury living.
+        </p>
+    </div>
+</div>
+
+<script>
+let textBox = document.getElementById("myText");
+let middleImage = document.getElementById("middle");
+let afterImage = document.getElementById("after");
+let h3scroll = document.getElementById("h3scroll");
+
+let maxY = textBox.scrollHeight - textBox.clientHeight;
+
+textBox.onscroll = function() {
+    myFunction();
+};
+
+function myFunction() {
+    let scrollAmount = textBox.scrollTop;
+    let progress = scrollAmount / maxY;
+
+    let middleOpacity;
+    let afterOpacity;
+
+    if (progress <= 0.5) {
+        // First half of scroll: 2005 fades into 2011
+        middleOpacity = progress * 2;
+        afterOpacity = 0;
+    } else {
+        // Second half of scroll: 2011 fades into 2021
+        middleOpacity = 1;
+        afterOpacity = (progress - 0.5) * 2;
+    }
+
+    middleImage.style.opacity = middleOpacity;
+    afterImage.style.opacity = afterOpacity;
+
+    h3scroll.innerText = "Big Sky Land Cover Change";
+}
+
+function replaceTop() {
+    textBox.style.top =
+        document.getElementById("after").offsetHeight + 80 + "px";
+}
+
+window.addEventListener("resize", function() {
+    replaceTop();
+    maxY = textBox.scrollHeight - textBox.clientHeight;
+});
+
+window.onload = function() {
+    replaceTop();
+    maxY = textBox.scrollHeight - textBox.clientHeight;
+};
+
+window.dispatchEvent(new Event("resize"));
+</script>
+
+</body>
+</html>
