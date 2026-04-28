@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Big Sky Land Cover Change</title>
+
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background-color: black;
+  color: white;
+}
+
+h1 {
+  text-align: center;
+  padding-top: 20px;
+}
+
+p {
+  padding: 1% 5%;
+  font-size: 20px;
+  line-height: 1.6;
+}
+
+/* Container styling */
+#container {
+  width: 95vw;
+  margin: 15px auto;
+  background-color: rgb(28, 28, 28);
+  padding: 20px;
+  border: 1px solid white;
+  border-radius: 4px;
+  text-align: center;
+  cursor: pointer;
+}
+
+/* Image box */
+#imageBox {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  height: 500px;
+  margin: 0 auto;
+}
+
+/* Images stacked */
+#imageBox img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* Visibility classes */
+.visible {
+  visibility: visible;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.caption {
+  font-size: 22px;
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+.instructions {
+  font-size: 16px;
+  color: lightgray;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Big Sky Land Cover Change Over Time</h1>
+
+<div id="container" onclick="changeImage()">
+
+  <div id="imageBox">
+    <img id="img1" class="visible" src="./HW6_BigSky2005.png" alt="2005">
+    <img id="img2" class="hidden" src="./HW6_BigSky2011.png" alt="2011">
+    <img id="img3" class="hidden" src="./HW6_BigSky2021.png" alt="2021">
+  </div>
+
+  <div class="caption" id="caption">2005</div>
+  <div class="instructions">Click to cycle through years</div>
+
+</div>
+
+<p>Between 2005 and 2021, land in Big Sky, Montana, shifted from a primarily checkerboarded, 
+    rural landscape into a highly developed, high-end resort destination. This transformation 
+    involved significant land consolidation, intense infrastructure development, and a shift 
+    toward massive private development projects.</p>
+
+<p>In this specific area of Big Sky, the land change is visible over the 16-year period, 
+    with the 2005 image showing a more rural landscape with scattered development, while the 
+    2021 image shows more expanded development, with resorts and private properties dominating the landscape. 
+    The 2011 image shows a transition period, with some development but not as extensive as in 2021.
+</p>
+
+<p>The 2021 satellite image was captured during snowfall, which may obscure some of the land changes, 
+    but the overall trend of increased development and land consolidation is still evident.The land development 
+    highlights the increasing tourism and real estate growth in Big Sky, Montana, which has transformed the area 
+    into a popular destination for outdoor recreation and luxury living.
+</p>
+
+<script>
+let current = 0;
+
+const images = document.querySelectorAll("#imageBox img");
+const caption = document.getElementById("caption");
+
+const years = ["2005", "2011", "2021"];
+
+function changeImage() {
+  // hide current
+  images[current].className = "hidden";
+
+  // move to next
+  current++;
+  if (current >= images.length) {
+    current = 0;
+  }
+
+  // show next
+  images[current].className = "visible";
+
+  // update caption
+  caption.textContent = years[current];
+}
+</script>
+
+</body>
+</html>
